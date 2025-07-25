@@ -1,0 +1,479 @@
+---
+title: "EM5_2_preprocessing"
+format: html
+editor: visual
+---
+
+## Prep
+
+### Load libraries + initialize
+
+```{r load libs etc}
+# Set working directory
+#setwd("D:/Canna_d/EM5_stuff/EM5_April_2025/raw_data")
+
+# Load libraries
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(effectsize)
+library(tidyverse)
+library(ggpubr)
+
+# Initialize data frames
+allFiles <- list.files(pattern=".csv$")
+all_Real_Data <- data.frame()
+all_Clicked <- data.frame()
+all_Correct_Clicked <- data.frame()
+
+# If I ever used the escape key to end the exp instead of pressing "q",
+# these columns don't get written to the dataframe,
+# So here we remove them as we don't need them for analysis anyway
+columns_to_remove <- c("goRightMouse.clicked_name", "endExp.keys",
+                       "endExp.rt","endExp.started", "endExp.stopped",
+                       "expFeedbackText.started","expFeedbackText.stopped")
+```
+
+### Extract data files
+
+Keep in mind these differences between EM5 and EM5_2:
+
+-   EM5_2 has two conditions: no-delay and long-delay
+
+-   EM5_2 has a binary column in the csv to indicate closing, called "closing"
+
+```{r extract data}
+# Set working directory
+#setwd("D:/Canna_d/EM5_stuff/EM5_April_2025/raw_data")
+
+# Extract data files
+for (d in 1:length(allFiles)){
+  all_Data <- read.csv(allFiles[d],header=TRUE,fileEncoding="UTF-8-BOM")
+  all_Data <- all_Data[, !(colnames(all_Data) %in% columns_to_remove)]
+  # Remove .csv extension for readability
+  all_Data$condsFile <- all_Data$condsFile %>% str_replace(".csv","") 
+  # Filter out the practice trials
+  real_Data <- all_Data %>% filter(realOrNot == 1) %>% 
+    # Filter out the introduction and instruction screens
+    filter(condsFile!="mixed") %>% 
+    filter(trialFeedBackPress.keys!="q") %>% 
+    # Select the relevant columns
+    select("participant","condsFile","delayDuration","order",
+           "multipleTrials.thisN","oneTrial.thisN","templateTime"
+           ,"templateFrame","nCorrect","nIncorrect",
+           "clickedImages","clickedImagesTime",
+           "correctClickedsName","correctClickedsTime",
+           "correctImages","curCorrectImages",
+           "workingTime","workingFrame", "closing") %>%
+    # Rename for readability
+    rename(trial = multipleTrials.thisN, trip = oneTrial.thisN,
+           listTime = templateTime, listFrame = templateFrame ,
+           shelfTime = workingTime, shelfFrame = workingFrame,
+           remainCorAfterTrip = curCorrectImages,
+           numCorrect = nCorrect,
+           numIncorrect = nIncorrect)
+  # Increment trip and trial index by 1 because the starting point is 0
+  real_Data$trial <- real_Data$trial+1  
+  real_Data$trip <- real_Data$trip+1
+  # Initialize columns containing the number of correct/incorrect for the current trip
+  real_Data[,c("nCurCorrect","nCurIncorrect","nCurClickeds")] <- NA 
+  
+  # Create new data frames that will hold the number of correct clicks per participant
+  curParClicked <- data.frame()
+  curParCorrectClicked <- data.frame()
+  # Create dataframe called "current_Info" that holds the information about the current moment in the for-loop
+  for (n in 1:nrow(real_Data)){
+    
+    current_Info <- real_Data[n, c("participant","condsFile","delayDuration","order", 
+                             "trial","trip","listTime","listFrame","numCorrect",
+                             "numIncorrect","shelfTime",'shelfFrame',
+                             "correctImages", "closing")] # added closing 4/12
+    # Clean the values in the column that specifies how many correct selections are left
+    # Note that when we use str_split(), the values turn into a list, so to keep it in vector form we use unlist()
+    # length() gets the count, so this variable will be a count of the number of correct selections that are left
+    curCorRemain <- real_Data$remainCorAfterTrip[n] %>%  gsub("\\[|\\]","",.) %>% 
+      gsub(" ","",.) %>% gsub("\'","",.) %>% str_split(",") %>% unlist() %>%   
+      length() 
+    # Clean the values from having weird characters
+    # setNames changes the name of the column
+    # First, we look at all of the attempts
+    curClickedName <- real_Data$clickedImages[n] %>%  gsub("\\[|\\]","",.) %>% 
+      gsub(" ","",.) %>% gsub("\'","",.) %>% str_split(",") %>% 
+      setNames("clickName")
+    curClickedTime <-real_Data$clickedImagesTime[n] %>% gsub("\\[|\\]","",.) %>%
+      str_split(",") %>% unlist %>% as.numeric() %>% list() %>% 
+      setNames("clickTime")
+    # Combine the info with the names of what was clicked and the time
+    curClicked <- cbind(current_Info,curClickedName,row.names=NULL) %>% 
+      cbind(curClickedTime,row.names=NULL)
+    # Now, we are cleaning the values for the correct attempts
+    curCorClickedName <- real_Data$correctClickedsName[n] %>%  
+      gsub("\\[|\\]","",.) %>% gsub(" ","",.) %>% gsub("\'","",.) %>% 
+      str_split(",") %>% setNames("corClickName") 
+    curCorClickedTime <-real_Data$correctClickedsTime[n] %>% 
+      gsub("\\[|\\]","",.) %>% str_split(",") %>% unlist %>% as.numeric() %>% 
+      list() %>% setNames("corClickTime")
+    # Combine the info with the names and the times of what was clicked
+    curCorClicked <-  cbind(current_Info,curCorClickedName,row.names=NULL) %>% 
+      cbind(curCorClickedTime, row.names=NULL)
+    # set nCurCorrect to be a count of what was correctly clicked, and nCurClickeds to be a count of what was attempted
+    real_Data[n,c("nCurCorrect","nCurClickeds")] <- 
+      c(length(na.omit(curCorClickedTime$corClickTime)),
+        length(na.omit(curClickedTime$clickTime))) 
+    # A new column, nRemainCorrect, gets the number of the remaining correct items added to the count of correct clicks
+    real_Data[n,"nRemainCorrect"] <- 
+      curCorRemain+length(na.omit(curCorClickedTime$corClickTime))
+    # Information about what a participant clicked goes in curParClicked, and info about what they clicked correctly goes in curParCorrectClicked
+    curParClicked <- rbind(curParClicked, curClicked)
+    curParCorrectClicked <- rbind(curParCorrectClicked, curCorClicked)
+  }
+  
+  # Set incorrect clicks to be the number of clicks minus the number of correct clicks
+  real_Data$nCurIncorrect <- real_Data$nCurClickeds-real_Data$nCurCorrect 
+  # Add the current iteration's data to the mother dataset, all_Real_Data
+  all_Real_Data <- rbind(all_Real_Data,real_Data)
+  all_Clicked <- rbind(all_Clicked,curParClicked) 
+  all_Correct_Clicked <- rbind(all_Correct_Clicked,curParCorrectClicked)  
+  
+}
+```
+
+### Checkpoint - save csv
+
+```{r checkpoint 1}
+write.csv(all_Real_Data,"all_Real_Data_check1_April2025.csv",row.names = FALSE)
+write.csv(all_Clicked,"all_Clicked_check1_April2025.csv",row.names = FALSE) 
+write.csv(all_Correct_Clicked,"all_Cor_Clicked_check1_April2025.csv",row.names = FALSE) 
+```
+
+## Process performance
+
+### Calculating correct responses
+
+```{r getting correct taps}
+# Make a dataframe containing the participant names and one containing the names of the conditions
+participants <- unique(all_Clicked$participant)
+cond <- unique(all_Clicked$condsFile)
+# Initialize a data frame that will hold the information about each trip
+newAllclicked <- data.frame()
+# Add columns to the dataframe that contains all of the clicked data that will contain information about performance
+all_Clicked[,c("clickAccuracy","remainCorImage","nRemainCor", 
+              "remainOptions")] <- NA
+
+# This for-loop will iterate over each participant and calculate their performance
+for (p in 1:length(participants)){
+  # In the for-loop, we are going to look at one participant at a time
+  curParClicked <- all_Clicked %>% filter(participant==participants[p]) 
+  # And we are going to look at one condition at a time
+  for (c in 1: length(cond)){
+    curCond <- curParClicked %>% filter(condsFile == cond[c])
+    # Set trials to be the unique values in the "trial" column for this condition
+    trials <- unique(curCond$trial)
+    # Now we are going to look at one trial at a time
+    for (t in 1:length(trials)){
+      curTrial <- curCond %>% filter(trial == trials[t])
+      # Clean the first value in the correctImages column for readability
+      curCorrectIm <- curTrial$correctImages[1] %>%  gsub("\\[|\\]","",.) %>%
+        gsub(" ","",.) %>% gsub("\'","",.) %>% str_split(",") %>% unlist()
+      # Set trips to be the unique values in the "trip" column for this trial
+      trips <- unique(curTrial$trip)
+      # Now we are going to look at one trip at a time (within the trial, within the condition, within the participant)
+      for (tr in 1:length(trips)){
+        curTrip <- curTrial %>% filter(trip == trips[tr])
+        if (nrow(curTrip) == 0) {
+  warning(paste("Empty curTrip for participant", participants[p], 
+                "condition", cond[c], 
+                "trial", trials[t], 
+                "trip", trips[tr]))
+  next
+}
+        # The remaining options for any given trip, at the beginning, is always 10 (10 pairs of 2-AFC)
+        nRemainOption <- 10
+        # For each trip, make sure we know what images are currently correct
+        for (q in 1: nrow(curTrip)){
+          curTrip$remainCorImage[q] <- vapply(list(curCorrectIm),
+                                              paste,collapse=",",character(1L))
+          # nRemainCor is the count of how many correct options are left
+          curTrip$nRemainCor[q] <- length(curCorrectIm)
+          # remainOptions is how many clickable images are left
+          curTrip$remainOptions[q] <- nRemainOption 
+          # clickAccuracy is whether the clicked image is correct or not
+          curTrip$clickAccuracy[q] <- 
+            as.numeric(curTrip$clickName[q] %in% curCorrectIm)
+          # Here, the remaining options become 10 minus the number of clicks you made
+          nRemainOption <- nRemainOption -length(na.omit(curTrip$clickTime[q])) 
+          # And the correct options that are left are the correct options not yet clicked on
+          curCorrectIm <- curCorrectIm[!curCorrectIm %in% curTrip$clickName[q]] 
+        }
+        # newAllClicked will hold the information about each trip
+        newAllclicked <- rbind(newAllclicked,curTrip)
+      }
+    }
+  }
+}
+```
+
+### Checkpoint 2, save csv
+
+```{r checkpoint 2}
+write.csv(newAllclicked,"all_Clicked_check2_April2025.csv",row.names = FALSE)
+
+```
+
+### Streak correct
+
+```{r calc streak correct}
+# Initialize the dataframe
+allClickedBe4Incor <- data.frame()
+
+for (p in 1:length(participants)){
+  # In the for-loop, we are going to look at one participant at a time, one condition at a time, one trial and then one trip at a time
+  curParClicked <- newAllclicked %>% filter(participant==participants[p])
+  for (c in 1: length(cond)){
+    curCond <- curParClicked %>% filter(condsFile == cond[c])
+    trials <- unique(curCond$trial)
+    for (t in 1:length(trials)){
+      curTrial <- curCond %>% filter(trial == trials[t])
+      trips <- unique(curTrial$trip)
+      # Now we are we will go within the trip
+      for (tr in 1:length(trips)){
+        curTrip <- curTrial %>% filter(trip == trips[tr])
+        # Here, correctIndex is assigned the first instance where the accuracy is zero, or the first instance where the participant was incorrect
+        correctIndex <- (which(curTrip$clickAccuracy==0))[1]
+        # if correctIndex is NA, it means that the participant did not click on anything, so their streak is not broken, so collect the data from this trip
+        if (is.na(correctIndex)){
+          validTripClick <- curTrip
+          # if correctIndex is 1, we want this row to be in ValidTripClick
+        } else if(correctIndex == 1) {
+          validTripClick <- curTrip[1,] 
+          # if correctIndex is indeed 0, make sure validTripClick contains the first row of the current trip up until (but not including) the first incorrect response
+        } else{
+          validTripClick <- curTrip[1:correctIndex-1,]
+        }
+        # Combine it into a dataframe
+        allClickedBe4Incor <- rbind(allClickedBe4Incor,validTripClick) 
+      }
+      
+    }
+    
+  }
+}
+
+# Get the sum of the streak correct for each trip
+allClickedBe4IncorSum <- allClickedBe4Incor %>% 
+  group_by(participant,condsFile,trial,trip) %>% 
+  summarize(nCurCorBe4Inc = sum(clickAccuracy,na.rm = T)) %>% 
+  ungroup()
+
+# Combine with the mother dataset
+all_Real_Data <- merge(all_Real_Data,allClickedBe4IncorSum) %>% 
+  relocate(nCurCorBe4Inc,.after=nCurCorrect)
+
+```
+
+### Checkpoint, save csv
+
+```{r checkpoint 3}
+write.csv(all_Real_Data,"all_Real_Data_check3_April2025.csv",row.names = FALSE)
+
+```
+
+### MU Calculation
+
+```{r get MU}
+# Calculate Memory Usage
+# MU = (((numCorrect/numAttempted)-0.5)/0.5)*numAttempted 
+all_Real_Data <- all_Real_Data %>%
+  group_by(participant, condsFile, trial, trip) %>%
+  mutate(MU = (((nCurCorrect / nCurClickeds) - 0.5) / 0.5) * nCurClickeds)
+
+# Replace NaNs with zeroes, because NaNs in MU occurred when the participant did not make any clicks (so they used zero memory)
+all_Real_Data$MU[is.nan(all_Real_Data$MU)] <- 0
+```
+
+### Checkpoint, save csv
+
+```{r checkpoint 4}
+write.csv(all_Real_Data,"all_Real_Data_Mu_check4_April25.csv",row.names = FALSE)
+
+```
+
+## Outlier calculation
+
+```{r outliers log study time}
+# Now, let's check for outliers
+# Note: we will be looking at the MAD
+# Note: the list time is NOT normally distributed - it has a long tail to the right
+# So we log transform it first
+all_Real_Data$log_listTime <- log10(all_Real_Data$listTime)
+
+# Make new dataset
+exclusions <- all_Real_Data
+
+# Filter by condition
+longDelay <- exclusions %>% 
+  filter(condsFile == "longDelay")
+
+noDelay <- exclusions %>% 
+  filter(condsFile == "noDelay")
+
+# Below calculates MAD for the Long-delay condition
+MAD_longDelay <- mad(longDelay$log_listTime)
+# Calculate maximum and minimum thresholds
+threshold_maximum <- median(longDelay$log_listTime, na.rm = TRUE) + (3*MAD_longDelay)
+threshold_minimum <- median(longDelay$log_listTime, na.rm = TRUE) - (3*MAD_longDelay)
+# Now determine which rows are outliers
+outlier_rows_LD <- subset(longDelay, log_listTime > threshold_maximum)
+outlier_rows_minimum_LD <- subset(longDelay, log_listTime < threshold_minimum)
+
+# Same for each condition
+MAD_noDelay <- mad(noDelay$log_listTime)
+threshold_maximum <- median(noDelay$log_listTime, na.rm = TRUE) + (3*MAD_noDelay)
+threshold_minimum <- median(noDelay$log_listTime, na.rm = TRUE) - (3*MAD_noDelay)
+outlier_rows_ND <- subset(noDelay, log_listTime > threshold_maximum)
+outlier_rows_minimum_ND <- subset(noDelay, log_listTime < threshold_minimum)
+
+# Combine all outlier rows
+outliers <- rbind(outlier_rows_LD, outlier_rows_minimum_LD,
+                    outlier_rows_ND, outlier_rows_minimum_ND
+                    )
+
+# Make sure the variables are numeric
+outliers$trial <- as.numeric(outliers$trial)
+outliers$trip <- as.numeric(outliers$trip)
+outliers$nCurCorBe4Inc <- as.numeric(outliers$nCurCorBe4Inc)
+outliers$MU <- as.numeric(outliers$MU)
+
+# Inspect each case of an excluded row to see if any excluded rows result in:
+  # 1. No trips for a given trial (if so, exclude trial)
+  # 2. Only 1/3 of free-response or no total-response? Remove condition for that participant
+
+# Change participant number below as needed for inspection
+inspect_exclusions <- all_Real_Data %>%
+  filter(participant == 55)
+
+# participant 55: participant excluded, outliers on both closing
+# participant 5: long delay trial 3
+# participant 23: long delay condition
+# participant 28: long delay trial 3
+
+# Remove outliers here
+all_Real_Data_exclusions <- anti_join(all_Real_Data, outliers, by = c("participant", "condsFile", "trip", "trial"))
+
+# Now we remove any participants or conditions that need to be excluded
+all_Real_Data_exclusions <- all_Real_Data_exclusions %>%
+  filter(!(participant == 55) & 
+           !(condsFile == "longDelay" & trial == 3 & participant == "w005") &
+           !(condsFile == "longDelay" & participant == "w023") &
+           !(condsFile == "longDelay" & trial == 3 & participant == "w028")) 
+         
+# Visually inspect
+inspect_exclusions <- all_Real_Data_exclusions %>%
+  filter(participant == 55)
+
+# Plot list time after exclusions
+ggplot(data = all_Real_Data_exclusions,mapping = aes(x = listTime))+
+  geom_histogram(binwidth = 1)+
+  theme_pubr(base_size = 20, base_family ="serif")+
+  theme(panel.spacing = unit(0, "lines"), 
+        strip.background = element_blank(),
+        #strip.placement = "inside",
+        #axis.title.y = element_blank(),
+        #axis.title.x = element_blank()
+  )+
+  scale_x_continuous(breaks=c(0,30,60,90))
+
+ggplot(data = all_Real_Data,mapping = aes(x = listTime))+
+  geom_histogram(binwidth = 1)+
+  theme_pubr(base_size = 20, base_family ="serif")+
+  theme(panel.spacing = unit(0, "lines"), 
+        strip.background = element_blank(),
+        #strip.placement = "inside",
+        #axis.title.y = element_blank(),
+        #axis.title.x = element_blank()
+  )+
+  scale_x_continuous(breaks=c(0,30,60,90))
+
+# Exclusions are good, make it our working dataset
+all_Real_Data_no_exclusions <- all_Real_Data
+all_Real_Data <- all_Real_Data_exclusions
+
+# Make sure there is a first trip for every trial
+unique_combinations_no_trip_1 <- all_Real_Data %>%
+  group_by(participant, condsFile, trial) %>%
+  summarise(has_trip_1 = any(trip == 1), .groups = 'drop') %>%
+  filter(!has_trip_1) %>%
+  select(participant, condsFile, trial)
+# Looks good! This code should output an empty dataset
+```
+
+### Checkpoint, save csv
+
+```{r checkpoint 5}
+write.csv(all_Real_Data,"all_Real_Data_AFTER_exclusions_April25.csv",row.names = FALSE)
+```
+
+## Demographics
+
+```{r read in demo}
+demo <- read.csv("raw_data/demographics_EM52.csv",header=TRUE)
+demo$Participant.number <- as.factor(demo$Participant.number)
+names(demo)[names(demo) == "Participant.number"] <- "participant"
+
+
+# normalize participant column
+all_Real_Data$participant <- gsub("^w0*", "", all_Real_Data$participant)
+all_Real_Data$participant <- as.factor(all_Real_Data$participant)
+```
+
+## Summarizing data
+
+```{r summariizing data}
+Summarized_data <- all_Real_Data %>% 
+  group_by(participant,condsFile,order,trial) %>% 
+  summarise(nTrip=n(),
+            totalListTime=sum(listTime,na.rm = T),
+            meanListTime = mean(listTime,na.rm = T),
+            totalShelfTime = sum(shelfTime,na.rm = T),
+            meanShelfTime = mean(shelfTime,na.rm = T),
+            totalTime = totalListTime + totalShelfTime,
+            totalCorrect=sum(nCurCorrect),
+            meanCorrect = totalCorrect/nTrip,
+            meanCorBefInc=sum(nCurCorBe4Inc)/nTrip,
+            totalInCorrect = sum(nCurIncorrect),
+            meanIncorrect = totalInCorrect/nTrip,
+            maxCorrect = max(nCurCorrect),
+            maxIncorrect = max(nCurIncorrect),
+            totalClickeds=sum(nCurClickeds),
+            meanclickeds=totalClickeds/nTrip,
+            meanMU = mean(MU, na.rm = TRUE)
+  ) %>% left_join(demo, by = "participant")
+
+write.csv(Summarized_data,"Summarized_data_April25.csv",row.names = FALSE)
+         
+# Do the same but for first trips only
+first_trip_only <- all_Real_Data %>%
+  filter(trip == 1)
+
+Summarized_first_trips <- first_trip_only %>% 
+  group_by(participant,condsFile,order,trial) %>% 
+  summarise(nTrip=n(),
+            totalListTime=sum(listTime,na.rm = T),
+            meanListTime = mean(listTime,na.rm = T),
+            totalShelfTime = sum(shelfTime,na.rm = T),
+            meanShelfTime = mean(shelfTime,na.rm = T),
+            totalTime = totalListTime + totalShelfTime, 
+            totalCorrect=sum(nCurCorrect),
+            meanCorrect = totalCorrect/nTrip,
+            meanCorBefInc=sum(nCurCorBe4Inc)/nTrip,
+            totalInCorrect = sum(nCurIncorrect),
+            meanIncorrect = totalInCorrect/nTrip,
+            maxCorrect = max(nCurCorrect),
+            maxIncorrect = max(nCurIncorrect),
+            totalClickeds=sum(nCurClickeds),
+            meanclickeds=totalClickeds/nTrip,
+            meanMU = mean(MU, na.rm = TRUE)
+  ) %>% left_join(demo, by = "participant")
+
+write.csv(Summarized_first_trips,"Summarized_first_trips_April25.csv",row.names = FALSE)
+```

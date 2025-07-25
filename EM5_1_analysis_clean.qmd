@@ -1,0 +1,678 @@
+---
+title: "EM5_1_analysis"
+format: html
+editor: visual
+---
+
+## Preregistered plan
+
+Unless specified otherwise, hypotheses will be tested using Generalized Linear Mixed-Effect Models (Lo & Andrews, 2015) with Condition and Age as fixed effects and participant as a random effect, and with appropriate linking functions. If there are substantive violations of the assumptions of these analyses, we will corroborate results with non-parametric tests.
+
+## Process data
+
+```{r process data}
+# Load libraries & general setup
+library(tidyverse)
+library(ggpubr)
+library(ggforce)
+library(effectsize)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(MuMIn)
+library(MCMCglmm)
+library(mixedpower)
+library(DHARMa)
+
+# Disable scientific notation
+options(scipen = 999)
+
+# Set the correct working directory
+#setwd("D:/Canna_d/EM5_stuff/EM5_data/Indivivual_participant_data/placeholder")
+
+# Load file
+multiDataTrialSum <- read.csv("multiDataTrialSum1Trip.csv", header = TRUE)
+
+# Remove the old One-shot
+no1shot <- multiDataTrialSum %>%
+  filter(!condsFile == "oneShot3.2") %>%
+  filter(!condsFile == "oneShotClosing")
+
+# Rename Closing trials as Total-response
+data <- no1shot %>%
+  mutate(condsFile = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "totalResponse",
+    TRUE ~ condsFile  # Keep the original value for all other cases
+  ))
+
+# Make output more interpretable
+options(contrasts = c("contr.sum","contr.poly"))
+```
+
+## Study time
+
+```{r study time model}
+# Average over all trials for each condition, for each child, as per preregistration
+study_time <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+# Center age
+study_time$age.ct <- study_time$age - mean(study_time$age)
+
+# make sure condition is a factor
+study_time$condsFile <- as.factor(study_time$condsFile)
+
+# Run model
+studyTimeGlmm <- glmer(mean_StudyTime ~ condsFile + age.ct + age.ct*condsFile + (1|participant), 
+                         data = study_time, 
+                         family = inverse.gaussian(link = "identity"), nAGQ = 0)
+
+# Below runs model diagnostic plots and tests
+plot(density(study_time$mean_StudyTime), xlim=c(0, 160), ylim=c(0, 1), main='M_1 y_hat')
+lines(density(predict(studyTimeGlmm, type='response')), col='red')
+
+plot(studyTimeGlmm)
+
+residuals <- residuals(studyTimeGlmm)
+qqnorm(residuals)
+qqline(residuals, col = "red")
+
+# Below we will compare model with one that has no fixed effects
+# To see if the fixed effects (condsFile) is important at explaining the data
+mixConTime_GLMM_null <- glmer(mean_StudyTime ~ 1 + (1|participant), 
+                              data = study_time, 
+                              family = inverse.gaussian(link = "identity"), nAGQ = 0)
+mixTimeConAov <- cbind(car::Anova(studyTimeGlmm),
+                       r.squaredGLMM(studyTimeGlmm,mixConTime_GLMM_null)) 
+
+# Compare the models
+anova(mixConTime_GLMM_null,studyTimeGlmm)
+
+# Look at the summary
+summary(studyTimeGlmm)
+mixTimeConAov
+
+# Pairwise comparisons
+contrasts(study_time$condsFile)
+emmeans(studyTimeGlmm, pairwise ~ condsFile)
+```
+
+## Memory Use
+
+```{r mu model}
+# Average over participant and condition
+MU_data <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+# Center age
+MU_data$age.ct <- MU_data$age - mean(MU_data$age)
+
+# Run the model
+MU_GLMM <- glmer(mean_MU ~ condsFile + age.ct + age.ct*condsFile + (1|participant), 
+                    data = MU_data, 
+                    family = gaussian(link = "identity"))
+
+# Below runs model diagnostic plots and tests
+plot(density(MU_data$mean_MU), xlim=c(-50, 50), ylim=c(0, 0.6), main='M_1 y_hat')
+lines(density(predict(MU_GLMM, type='response') ), col='red')
+
+plot(MU_GLMM)
+
+residuals <- residuals(MU_GLMM)
+qqnorm(residuals)
+qqline(residuals, col = "red")
+
+# Summary
+summary(MU_GLMM)
+
+# Get the p value, and R squared
+MUfree_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = MU_data, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(MU_GLMM),
+                   r.squaredGLMM(MU_GLMM,MUfree_null))
+
+# Comparing if the full fits better than the null model
+anova(MUfree_null,MU_GLMM)
+
+# Pairwise comparisons
+library(emmeans)
+emmeans(MU_GLMM, list(pairwise ~ condsFile), adjust = "tukey")
+
+```
+
+### MU Free VS Total
+
+```{r hypotheses 3 and 4}
+# Make sure dplyr is loaded
+library(dplyr)
+
+# Set cond-type to say whether it was Free-response or Total-response
+condType_data <- no1shot %>%
+  mutate(condType = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "Total",
+    condsFile %in% c("noDelay", "longDelay") ~ "Free",
+    TRUE ~ NA_character_
+  ))
+
+# Average over participant and condition
+freeVtotal <- condType_data %>%
+  group_by(participant, condType) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE),
+            age = first(age),
+            .groups = 'drop')
+
+# Look at distribution of data
+hist(freeVtotal$mean_MU)
+
+# Model
+freeVtotal_glmm <- glmer(mean_MU ~ condType + (1|participant),
+                 data = freeVtotal, 
+                    family = gaussian(link = "identity"))
+
+# Below runs model diagnostic plots and tests
+plot(density(freeVtotal$mean_MU), xlim=c(-50, 50), ylim=c(0, 0.6), 
+     main='M_1 y_hat')
+lines(density(predict(freeVtotal_glmm, type='response') ), col='red')
+
+plot(freeVtotal_glmm)
+
+residuals <- residuals(freeVtotal_glmm)
+qqnorm(residuals)
+qqline(residuals, col = "red")
+
+# Use check_model from performance
+library(performance)
+check_model(freeVtotal_glmm)
+
+# Compare full model with null model
+MUfree_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = freeVtotal, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(freeVtotal_glmm),
+                   r.squaredGLMM(freeVtotal_glmm,MUfree_null))
+
+anova(MUfree_null,freeVtotal_glmm)
+
+# Get the summary
+summary(freeVtotal_glmm)
+MUfreeAov
+```
+
+### Effect size
+
+```{r effect sizes}
+
+# Get eta squared
+library(effectsize)
+model <- lmer(mean_StudyTime ~ age.ct * condsFile + (1 | participant), data = study_time)
+eta_squared(model)
+
+model_mu <- lmer(mean_MU ~ age.ct * condsFile + (1 | participant), data = MU_data)
+eta_squared(model_mu)
+```
+
+### KS Test
+
+This test is to see how distributed our ages are.
+
+```{r ks test}
+# Run the KS test
+ks.test(MU_data$age, "punif", 
+        min(MU_data$age), 
+        max(MU_data$age))
+
+# Plot the density of actual data
+plot(density(MU_data$age), 
+     main = "Age Distribution vs Uniform", 
+     xlab = "Age", 
+     ylab = "Density", 
+     xlim = c(min(MU_data$age), max(MU_data$age)),
+     ylim = c(0,0.6),
+     lwd = 2)
+
+# Add a horizontal line for the uniform distribution's density
+abline(h = 1 / (max(MU_data$age) - min(MU_data$age)), 
+       col = "red", lty = 2, lwd = 2)
+
+legend("topright", legend = c("Observed Density", "Uniform Density"),
+       col = c("black", "red"), lty = c(1,2), lwd = 2)
+```
+
+### Order effects
+
+```{r order effects process}
+# Average over all trials for each condition, for each child, as per preregistration
+summarized_data <- data %>%
+  group_by(participant, condsFile, order) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE),
+            mean_Streak = mean(meanCorBefInc, na.rm = TRUE),
+            age = first(age),
+            .groups = 'drop')
+
+# make sure condition and order is a factor
+summarized_data$condsFile <- as.factor(summarized_data$condsFile)
+summarized_data$order <- as.factor(summarized_data$order)
+
+# Center age
+summarized_data$age.ct <- summarized_data$age - mean(summarized_data$age)
+
+```
+
+#### Order effects: study time
+
+```{r order study time}
+# Run the model
+studyTimeOrder <- glmer(mean_StudyTime ~ condsFile + order + 
+                          age.ct + age.ct*condsFile + (1|participant), 
+                         data = summarized_data, 
+                         family = inverse.gaussian(link = "identity"))
+
+# Check summary
+summary(studyTimeOrder)
+
+# Visualize
+plot(summarized_data$order, summarized_data$mean_StudyTime)
+```
+
+#### Order effects: MU
+
+```{r order MU}
+# Run the model
+MU_order <- glmer(mean_MU ~ condsFile + order + 
+                    age.ct + age.ct*condsFile + (1|participant),
+                 data = summarized_data, 
+                    family = gaussian(link = "identity"))
+
+# Check summary
+summary(MU_order)
+
+# Compare null with full
+MUOrder_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = summarized_data, family = gaussian(link = "identity"))
+
+MUfreeAov <- cbind(car::Anova(MU_order),
+                   r.squaredGLMM(MU_order,MUOrder_null))
+
+# Visualize
+plot(summarized_data$order, summarized_data$mean_MU)
+
+# Check p value
+MUfreeAov
+```
+
+### Block effects
+
+Whether or not performance decreases over time.
+
+```{r block effects}
+# Make sure trialis a factor
+data$trial <- as.factor(data$trial)
+
+# Order B, no delay first
+orderB <- data[data$order == "B",]
+
+orderB <- orderB %>%
+  filter(!(condsFile %in% c("totalResponse")))
+
+ggplot(orderB, aes(x = factor(trial), y = meanListTime)) +
+  geom_boxplot() +
+  facet_wrap(~ condsFile) +
+  labs(x = "Trial", y = "Study Time", title = "Study Time by Trial and Condition, order B") +
+  theme_minimal()
+
+ggplot(orderB, aes(x = factor(trial), y = meanMU)) +
+  geom_boxplot() +
+  facet_wrap(~ condsFile) +
+  labs(x = "Trial", y = "MU", title = "MU by Trial and Condition, order B") +
+  theme_minimal()
+
+# Order D, long delay first
+orderD <- data[data$order == "D",]
+
+orderD <- orderD %>%
+  filter(!(condsFile %in% c("totalResponse")))
+
+ggplot(orderD, aes(x = factor(trial), y = meanListTime)) +
+  geom_boxplot() +
+  facet_wrap(~ condsFile) +
+  labs(x = "Trial", y = "Study Time", title = "Study Time by Trial and Condition, order D") +
+  theme_minimal()
+
+ggplot(orderD, aes(x = factor(trial), y = meanMU)) +
+  geom_boxplot() +
+  facet_wrap(~ condsFile) +
+  labs(x = "Trial", y = "MU", title = "MU by Trial and Condition, order D") +
+  theme_minimal()
+```
+
+## Supplementary materials
+
+### Old One-shot info
+
+```{r old one shot}
+# Rename Closing trials as Total-response
+multiDataTrialSum <- multiDataTrialSum %>%
+  mutate(condsFile = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "One_Shot",
+    TRUE ~ condsFile  # Keep the original value for all other cases
+  ))
+
+# Needs to be a factor to rename
+multiDataTrialSum$condsFile <- as.factor(multiDataTrialSum$condsFile)
+
+# Rename
+levels(multiDataTrialSum$condsFile)[levels(multiDataTrialSum$condsFile) == "oneShot3.2"] <- "Old_One_Shot"
+levels(multiDataTrialSum$condsFile)[levels(multiDataTrialSum$condsFile) == "oneShotClosing"] <- "Old_One_Shot_closing"
+
+# MU
+# Group by participant and conditions
+MU_suppMaterials <- multiDataTrialSum %>%
+     group_by(participant, condsFile) %>%
+     summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+               age = first(age),
+               .groups = 'drop')
+
+# Get table of summary stats
+MU_suppMaterials %>%
+  group_by(condsFile) %>%
+  summarise(
+    Mean = mean(mean_MU, na.rm = TRUE),
+    SD = sd(mean_MU, na.rm = TRUE),
+    Min = min(mean_MU, na.rm = TRUE),
+    Max = max(mean_MU, na.rm = TRUE),
+    age = first(age),
+    .groups = "drop"
+  )
+
+# Study time
+# Group by participant and condition
+ST_suppMaterials <- multiDataTrialSum %>%
+     group_by(participant, condsFile) %>%
+     summarize(mean_ST = mean(meanListTime, na.rm = TRUE), 
+               age = first(age),
+               .groups = 'drop')
+
+# Get table of summary stats
+ST_suppMaterials %>%
+  group_by(condsFile) %>%
+  summarise(
+    Mean = mean(mean_ST, na.rm = TRUE),
+    SD = sd(mean_ST, na.rm = TRUE),
+    Min = min(mean_ST, na.rm = TRUE),
+    Max = max(mean_ST, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Remove total-response trials
+noTR <- MU_suppMaterials %>%
+  filter(!condsFile == "Old_One_Shot_closing") %>%
+  filter(!condsFile == "One_Shot")
+
+# Center age
+noTR$age.ct <- noTR$age - mean(noTR$age)
+
+# Model for MU
+MU_Old_oneShot <- glmer(mean_MU ~ condsFile + + age.ct + age.ct*condsFile +
+                          (1|participant), 
+                    data = noTR, 
+                    family = gaussian(link = "identity"))
+
+summary(MU_Old_oneShot)
+MU_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = noTR, family = gaussian(link = "identity"))
+MUAov <- cbind(car::Anova(MU_Old_oneShot),
+                   r.squaredGLMM(MU_Old_oneShot,MU_null))
+
+# Effect size MU
+library(effectsize)
+model <- lmer(mean_MU  ~ condsFile + (1 | participant), data = noTR)
+eta_squared(model)
+
+model <- lmer(mean_MU  ~ age.ct + (1 | participant), data = noTR)
+eta_squared(model)
+
+model <- lmer(mean_MU  ~ age.ct*condsFile + (1 | participant), data = noTR)
+eta_squared(model)
+
+# Model for Study time
+# Remove total-response trials
+noTR_ST <- ST_suppMaterials %>%
+  filter(!condsFile == "Old_One_Shot_closing") %>%
+  filter(!condsFile == "One_Shot")
+
+noTR_ST$age.ct <- noTR_ST$age - mean(noTR_ST$age)
+
+ST_Old_oneShot <- glmer(mean_ST ~ condsFile + age.ct + age.ct*condsFile + 
+                          (1|participant), 
+                         data = noTR_ST, 
+                         family = inverse.gaussian(link = "identity"), nAGQ = 0)
+
+summary(ST_Old_oneShot)
+ST_null <- lmer(mean_ST ~ 1 + (1|participant), 
+                     data = noTR_ST)
+STAov <- cbind(car::Anova(ST_Old_oneShot),
+                   r.squaredGLMM(ST_Old_oneShot,ST_null))
+
+# Effect sizes
+model <- lmer(mean_ST  ~ condsFile + (1 | participant), data = noTR_ST)
+eta_squared(model)
+
+model <- lmer(mean_ST  ~ age.ct + (1 | participant), data = noTR_ST)
+eta_squared(model)
+
+model <- lmer(mean_ST  ~ age.ct*condsFile + (1 | participant), data = noTR_ST)
+eta_squared(model)
+
+## Free VS Total response
+# Set cond-type to say whether it was Free-response or Total-response
+condType_data_supp <- multiDataTrialSum %>%
+  mutate(condType = case_when(
+    condsFile %in% c("One_Shot", "Old_One_Shot_closing") ~ "Total",
+    condsFile %in% c("noDelay", "longDelay", "Old_One_Shot") ~ "Free",
+    TRUE ~ NA_character_
+  ))
+
+# Average over participant and condition
+freeVtotal_supp <- condType_data_supp %>%
+  group_by(participant, condType) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE),
+            age = first(age),
+            .groups = 'drop')
+
+# Model
+freeVtotal_glm_supp <- glmer(mean_MU ~ condType + (1|participant),
+                 data = freeVtotal_supp, 
+                    family = gaussian(link = "identity"))
+
+MUsupp_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = freeVtotal_supp, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(freeVtotal_glm_supp),
+                   r.squaredGLMM(freeVtotal_glm_supp,MUsupp_null))
+
+# Effect size
+model <- lmer(mean_MU  ~ condType + (1 | participant), data = freeVtotal_supp)
+eta_squared(model)
+
+# Model
+freeVtotal_st_supp <- lmer(mean_StudyTime ~ condType + (1|participant),
+                 data = freeVtotal_supp)
+
+STsupp_null <- lmer(mean_StudyTime ~ 1 + (1|participant), 
+                     data = freeVtotal_supp)
+STAov <- cbind(car::Anova(freeVtotal_st_supp),
+                   r.squaredGLMM(freeVtotal_st_supp,STsupp_null))
+
+```
+
+#### Screen use
+
+```{r screen use}
+
+# Group by participant 
+participant_data <- data %>%
+  group_by(participant) %>%
+  slice(1) %>%
+    ungroup()
+
+# Organize into numeric data
+participant_data <- participant_data %>%
+  mutate(screen_use_numeric = case_when(
+    screen_use_hour == "0" ~ 0,
+    screen_use_hour == "0-1 hour" ~ 1,
+    screen_use_hour == "1-2 hours" ~ 2,
+    screen_use_hour == "2-3 hours" ~ 3,
+    TRUE ~ NA_real_
+  ))
+
+# Get mean and SD
+mean(participant_data$screen_use_numeric, na.rm = T)
+sd(participant_data$screen_use_numeric, na.rm = T)
+
+```
+
+#### All trips
+
+```{r all trips process}
+# Set the correct working directory (only when running locally)
+setwd("D:/Canna_d/EM5_stuff/EM5_data/Indivivual_participant_data/placeholder")
+
+# Load file
+multiDataTrialSum <- read.csv("multiDataTrialSum.csv", header = TRUE)
+
+# Remove the old One-shot
+no1shot <- multiDataTrialSum %>%
+  filter(!condsFile == "oneShot3.2") %>%
+  filter(!condsFile == "oneShotClosing")
+
+# Rename Closing trials as Total-response
+data <- no1shot %>%
+  mutate(condsFile = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "totalResponse",
+    TRUE ~ condsFile  # Keep the original value for all other cases
+  ))
+```
+
+##### Study time
+
+```{r all trips study time}
+# Average over all trials for each condition, for each child, as per preregistration
+study_time <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+# Center age
+study_time$age.ct <- study_time$age - mean(study_time$age)
+
+# make sure condition is a factor
+study_time$condsFile <- as.factor(study_time$condsFile)
+
+# Run model
+studyTime_all <- glmer(mean_StudyTime ~ condsFile + age.ct + age.ct*condsFile + (1|participant), 
+                         data = study_time, 
+                         family = inverse.gaussian(link = "identity"), nAGQ = 0)
+
+mixConTime_GLMM_null <- glmer(mean_StudyTime ~ 1 + (1|participant), 
+                              data = study_time, 
+                              family = inverse.gaussian(link = "identity"), nAGQ = 0)
+mixTimeConAov <- cbind(car::Anova(studyTime_all),
+                       r.squaredGLMM(studyTime_all,mixConTime_GLMM_null)) 
+
+# Effect size
+library(effectsize)
+model <- lmer(mean_StudyTime ~ condsFile + (1|participant), 
+                         data = study_time)
+eta_squared(model)
+
+model <- lmer(mean_StudyTime ~ age.ct + (1|participant), 
+                         data = study_time)
+eta_squared(model)
+
+model <- lmer(mean_StudyTime ~ age.ct*condsFile + (1|participant), 
+                         data = study_time)
+eta_squared(model)
+```
+
+##### MU
+
+```{r all trips mu}
+# Average over participant and condition
+MU_data <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+# Center age
+MU_data$age.ct <- MU_data$age - mean(MU_data$age)
+
+# Run the model
+MU_all <- glmer(mean_MU ~ condsFile + age.ct + age.ct*condsFile + (1|participant), 
+                    data = MU_data, 
+                    family = gaussian(link = "identity"))
+
+# Get the p value, and R squared
+MUfree_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = MU_data, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(MU_all),
+                   r.squaredGLMM(MU_all,MUfree_null))
+
+# Effect size
+model <- lmer(mean_MU ~ condsFile + (1|participant), 
+                         data = MU_data)
+eta_squared(model)
+
+model <- lmer(mean_MU ~ age.ct + (1|participant), 
+                         data = MU_data)
+eta_squared(model)
+
+model <- lmer(mean_MU ~ age.ct*condsFile + (1|participant), 
+                         data = MU_data)
+eta_squared(model)
+```
+
+### Comparisons with Liang et al.
+
+Trips
+
+```{r trips}
+# Set the correct working directory (only when running locally)
+setwd("D:/Canna_d/EM5_stuff/EM5_data/Indivivual_participant_data/placeholder")
+
+# Load file
+multiDataTrialSum <- read.csv("multiDataTrialSum.csv", header = TRUE)
+
+# Get mean and SD
+mean(multiDataTrialSum$nTrip[multiDataTrialSum$condsFile == "noDelay"],)
+mean(multiDataTrialSum$nTrip[multiDataTrialSum$condsFile == "longDelay"],)
+sd(multiDataTrialSum$nTrip[multiDataTrialSum$condsFile == "noDelay"],)
+sd(multiDataTrialSum$nTrip[multiDataTrialSum$condsFile == "longDelay"],)
+```
+
+Streak correct
+
+```{r streak correct}
+# Average over participant and condition
+Streak_data <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_Streak = mean(meanCorBefInc, na.rm = TRUE), 
+            .groups = 'drop')
+
+# Get mean and SD
+mean(Streak_data$mean_Streak[Streak_data$condsFile == "noDelay"],)
+mean(Streak_data$mean_Streak[Streak_data$condsFile == "longDelay"],)
+sd(Streak_data$mean_Streak[Streak_data$condsFile == "noDelay"],)
+sd(Streak_data$mean_Streak[Streak_data$condsFile == "longDelay"],)
+
+```
