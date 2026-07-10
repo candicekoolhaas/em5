@@ -1,0 +1,2 @@
+This folder contains the experiment files to run experiment 2 in psychopy, if you download the folder and open it in PsychoPy version 2022.2.3, it should work, but please reach out if you tried and it does not! One of my projects is to better annotate this and make this easier to use, but currently I am just uploading it how it is, but I'm happy to help anyone wanting to use it!
+candice.koolhaas001@umb.edu
