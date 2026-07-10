@@ -1,0 +1,1308 @@
+---
+title: "Experiment_1_analysis"
+format: html
+editor: visual
+---
+
+# Main analyses
+
+How much do you remember when it’s up to you? Measuring memory use without response bias in young children
+
+Last edited: 10/3/25
+
+In this file there is the preregistered main analyses, secondary analyses, as well as the analyses and descriptive statistics used for the supplementary materials.
+
+Variable and data descriptions:
+
++---------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------+
+| Experiment1_data.csv                                                                                                            | metacog.csv                                                                | Experiment1_allTrips.csv                                                                                                        |
++=================================================================================================================================+============================================================================+=================================================================================================================================+
+| |  |                                                                                                                            | |                                                                        | | |  |                                                                                                                            |
+| |----|                                                                                                                          | |------------------------------------------------------------------------| | |----|                                                                                                                          |
+| | participant: participant ID |                                                                                                 | | participant: participant ID                                            | | | participant: participant ID |                                                                                                 |
+| | condsFile: condition |                                                                                                        | | easy: child's answer to which condition was easier                     | | | condsFile: condition |                                                                                                        |
+| | order: counterbalanced order |                                                                                                | | again: child's answer to which condition they would like to play again | | | order: counterbalanced order |                                                                                                |
+| | trial: trial number |                                                                                                         | | strategy: child's answer to the fourth, open ended strategy question   | | | trial: trial number |                                                                                                         |
+| | nTrip: trip ID (always 1) |                                                                                                   |                                                                            | | nTrip: trip ID |                                                                                                              |
+| | totalListTime: absolute time studying the list |                                                                              |                                                                            | | totalListTime: absolute time studying the list |                                                                              |
+| | meanListTime: average time studying the list (same as totalListTime since this data is for first-trips only) |                |                                                                            | | meanListTime: average time studying the list |                                                                                |
+| | totalShelfTime: absolute time selecting items in the store |                                                                  |                                                                            | | totalShelfTime: absolute time selecting items in the store |                                                                  |
+| | meanShelfTime: average selecting items in the store (same as totalShelf Time since this data is for first-trips only) |       |                                                                            | | meanShelfTime: average selecting items in the store |                                                                         |
+| | totalTime: absolute time in the first trip studying the list and selecting items in the store |                               |                                                                            | | totalTime: absolute time in the first trip studying the list and selecting items in the store |                               |
+| | totalCorrect: sum of correct selections |                                                                                     |                                                                            | | totalCorrect: sum of correct selections |                                                                                     |
+| | meanCorrect: mean of correct selections (same as totalCorrect since this data is for first-trips only) |                      |                                                                            | | meanCorrect: mean of correct selections |                                                                                     |
+| | meanCorBefInc: mean correct selections before making an incorrect selection |                                                 |                                                                            | | meanCorBefInc: mean correct selections before making an incorrect selection |                                                 |
+| | totalInCorrect: sum of incorrect selections |                                                                                 |                                                                            | | totalInCorrect: sum of incorrect selections |                                                                                 |
+| | meanIncorrect: mean of incorrect selections (same as totalInCorrect since this data is for first-trips only) |                |                                                                            | | meanIncorrect: mean of incorrect selections |                                                                                 |
+| | maxCorrect: maximum amount of correct selections (same as totalCorrect since this data is for first-trips only) |             |                                                                            | | maxCorrect: maximum amount of correct selections |                                                                            |
+| | maxIncorrect: maximum amount of incorrect selections (same as totalInCorrect since this data is for first-trips only) |       |                                                                            | | maxIncorrect: maximum amount of incorrect selections |                                                                        |
+| | totalClickeds: sum of all selections made |                                                                                   |                                                                            | | totalClickeds: sum of all selections made |                                                                                   |
+| | meanclickeds: mean of all selections made (same as totalClickeds since this data is for first-trips only) |                   |                                                                            | | meanclickeds: mean of all selections made |                                                                                   |
+| | meanMU: average value of Memory Use |                                                                                         |                                                                            | | meanMU: average value of Memory Use |                                                                                         |
+| | datetime: day and time of testing |                                                                                           |                                                                            | | datetime: day and time of testing |                                                                                           |
+| | Gender: gender of participant |                                                                                               |                                                                            | | Gender: gender of participant |                                                                                               |
+| | Parent_reported_age: age that parent reported in the demographic form |                                                       |                                                                            | | Parent_reported_age: age that parent reported in the demographic form |                                                       |
+| | Grade: school grade of participant (parent-reported) |                                                                        |                                                                            | | Grade: school grade of participant (parent-reported) |                                                                        |
+| | Ethnicity: ethnicity of participant (parent-reported) |                                                                       |                                                                            | | Ethnicity: ethnicity of participant (parent-reported) |                                                                       |
+| | Race: race of participant (parent-reported) |                                                                                 |                                                                            | | Race: race of participant (parent-reported) |                                                                                 |
+| | screen_use_days: number of days with which the child uses a touchscreen device (parent-reported) |                            |                                                                            | | screen_use_days: number of days with which the child uses a touchscreen device (parent-reported) |                            |
+| | screen_use_hour: number of hours with which the child uses a touchscreen device on a given day (parent-reported) |            |                                                                            | | screen_use_hour: number of hours with which the child uses a touchscreen device on a given day (parent-reported) |            |
+| | screen_purpose: purpose for which the child uses a touchscreen device (parent-reported) |                                     |                                                                            | | screen_purpose: purpose for which the child uses a touchscreen device (parent-reported) |                                     |
+| | colorblindness: whether the child is colorblind (parent-reported) |                                                           |                                                                            | | colorblindness: whether the child is colorblind (parent-reported) |                                                           |
+| | screen_age_started: age at which the child began to use a touchscreen device (parent-reported) |                              |                                                                            | | screen_age_started: age at which the child began to use a touchscreen device (parent-reported) |                              |
+| | intervention: whether the child has received professional intervention for developmental related concerns (parent-reported) | |                                                                            | | intervention: whether the child has received professional intervention for developmental related concerns (parent-reported) | |
+| | languages: languages the child hears at home besides English (parent-reported) |                                              |                                                                            | | languages: languages the child hears at home besides English (parent-reported) |                                              |
+| | birthday.x: parent-reported birthday on demographic form |                                                                    |                                                                            | | birthday.x: parent-reported birthday on demographic form |                                                                    |
+| | birthday.y: experimenter-reported birthday from asking parent directly |                                                      |                                                                            | | birthday.y: experimenter-reported birthday from asking parent directly |                                                      |
+| | age: rounded age of participant |                                                                                             |                                                                            | | age: rounded age of participant |                                                                                             |
+| | date: day of testing |                                                                                                        |                                                                            | | date: day of testing |                                                                                                        |
+| | months: age of child in months |                                                                                              |                                                                            | | months: age of child in months |                                                                                              |
+| | days: days to add to months to get exact child age at day of testing |                                                        |                                                                            | | days: days to add to months to get exact child age at day of testing |                                                        |
+| | agebin: binned age category of child |                                                                                        |                                                                            | | agebin: binned age category of child |                                                                                        |
+| | conditionType: whether the condition was free-response or total-response |                                                    |                                                                            |                                                                                                                                 |
++---------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------+
+
+## Process data
+
+```{r process data}
+# Load libraries & general setup
+library(tidyverse)
+library(ggpubr)
+library(ggforce)
+library(effectsize)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(MuMIn)
+library(MCMCglmm)
+library(DHARMa)
+
+# Disable scientific notation
+options(scipen = 999)
+
+# Load file
+multiDataTrialSum1Trip <- read.csv("data/Experiment1_data.csv", header = TRUE)
+
+# Remove the old One-shot block
+# (See Supplementary Table S1, S2, S3, S4)
+no1shot <- multiDataTrialSum1Trip %>%
+  filter(!condsFile == "oneShot3.2") %>%
+  filter(!condsFile == "oneShotClosing")
+
+# Rename Closing trials as Total-response
+# (See Supplementary Table S1)
+data <- no1shot %>%
+  mutate(condsFile = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "totalResponse",
+    TRUE ~ condsFile  # Keep the original value for all other cases
+  ))
+
+# Make output more interpretable by using sum coding
+options(contrasts = c("contr.sum","contr.poly"))
+```
+
+## Study time
+
+Preregistration: "Unless specified otherwise, hypotheses will be tested using Generalized Linear Mixed-Effect Models (Lo & Andrews, 2015) with Condition and Age as fixed effects and participant as a random effect, and with appropriate linking functions. If there are substantive violations of the assumptions of these analyses, we will corroborate results with non-parametric tests."
+
+```{r study time model}
+# Average over all trials for each condition, for each child, as per preregistration
+study_time <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+# Center age
+study_time$age.ct <- study_time$age - mean(study_time$age)
+
+# make sure condition is a factor
+study_time$condsFile <- as.factor(study_time$condsFile)
+
+# Run model
+studyTimeGlmm <- glmer(mean_StudyTime ~ condsFile + age.ct + age.ct*condsFile + (1|participant), 
+                         data = study_time, 
+                         family = inverse.gaussian(link = "identity"), nAGQ = 0)
+
+# Below runs model diagnostic plots and tests
+plot(density(study_time$mean_StudyTime), xlim=c(0, 160), ylim=c(0, 1), main='M_1 y_hat')
+lines(density(predict(studyTimeGlmm, type='response')), col='red')
+
+plot(studyTimeGlmm)
+
+residuals <- residuals(studyTimeGlmm)
+qqnorm(residuals)
+qqline(residuals, col = "red")
+
+# Below we will compare model with one that has no fixed effects
+# To see if the fixed effects (condsFile) is important at explaining the data
+mixConTime_GLMM_null <- glmer(mean_StudyTime ~ 1 + (1|participant), 
+                              data = study_time, 
+                              family = inverse.gaussian(link = "identity"), nAGQ = 0)
+mixTimeConAov <- cbind(car::Anova(studyTimeGlmm),
+                       r.squaredGLMM(studyTimeGlmm,mixConTime_GLMM_null)) 
+
+# Compare the models
+anova(mixConTime_GLMM_null,studyTimeGlmm)
+
+# Look at the summary
+summary(studyTimeGlmm)
+mixTimeConAov
+
+# Pairwise comparisons
+contrasts(study_time$condsFile)
+emmeans(studyTimeGlmm, pairwise ~ condsFile)
+
+# Make No-delay the reference
+study_timeLD <- study_time
+study_timeLD$condsFile <- relevel(study_time$condsFile, ref = "longDelay")
+
+studyTimeGlmmLD <- glmer(mean_StudyTime ~ condsFile + age.ct + age.ct*condsFile + 
+                         (1|participant), 
+                       data = study_timeLD, 
+                       family = inverse.gaussian(link = "identity"), 
+                       nAGQ = 0)
+
+# Simple linear regression with difference score for age-of-emergence
+# (For the manuscript, this was done in Prism, but here is an R approximation)
+
+# Remove Long-delay condition
+No_LD <- study_time %>% filter(!condsFile %in% "longDelay")
+
+# Select relevant columns for Study time regression
+No_LD_wide_ST <- No_LD %>% 
+  select(participant, condsFile, mean_StudyTime, age, age.ct) 
+
+# Make wide
+No_LD_wide_ST <- pivot_wider(No_LD_wide_ST, names_from = condsFile, values_from = mean_StudyTime)
+
+# Get difference scores
+No_LD_wide_ST$diffscores <- No_LD_wide_ST$totalResponse - No_LD_wide_ST$noDelay
+
+# Remove NA's
+noNA_ST <- na.omit(No_LD_wide_ST)
+
+# Regression for Study time
+ST_model <- lm(diffscores ~ age, data = noNA_ST)
+
+# Plot
+pStudytime <- ggplot(noNA_ST, aes(x=age, y=diffscores)) +
+  geom_point() +
+  geom_smooth(method=lm , color="black", fill="grey", se=TRUE) +
+  scale_y_continuous(limits = c(-5,15)) +
+  theme_classic()
+
+library(car)
+# x-intercept is -b0/b1
+deltaMethod(ST_model, "-(Intercept)/age", level = 0.95)
+
+## Calculate leverage of age
+#calculate leverage for each observation in the model
+hats <- as.data.frame(hatvalues(ST_model))
+```
+
+## Memory Use
+
+```{r mu model}
+# Average over participant and condition
+MU_data <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+# Center age
+MU_data$age.ct <- MU_data$age - mean(MU_data$age)
+
+# make sure condition is a factor
+MU_data$condsFile <- as.factor(MU_data$condsFile)
+
+# Reference level should be One-shot
+MU_data$condsFile <- factor(
+  MU_data$condsFile,
+  levels = c("longDelay", "noDelay", "totalResponse")
+)
+contrasts(MU_data$condsFile) <- contr.sum(3)
+
+# Run the model
+MU_GLMM <- lmer(mean_MU ~ condsFile + age.ct + age.ct*condsFile + (1|participant), 
+                    data = MU_data)
+
+# Below runs model diagnostic plots and tests
+plot(density(MU_data$mean_MU), xlim=c(-50, 50), ylim=c(0, 0.6), main='M_1 y_hat')
+lines(density(predict(MU_GLMM, type='response') ), col='red')
+
+plot(MU_GLMM)
+
+residuals <- residuals(MU_GLMM)
+qqnorm(residuals)
+qqline(residuals, col = "red")
+
+# Summary
+library(lmerTest)
+summary(MU_GLMM)
+
+# Get the p value, and R squared
+MUfree_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = MU_data, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(MU_GLMM),
+                   r.squaredGLMM(MU_GLMM,MUfree_null))
+
+MUfreeAov
+
+# Comparing if the full fits better than the null model
+anova(MUfree_null,MU_GLMM)
+
+# Pairwise comparisons
+library(emmeans)
+emmeans(MU_GLMM, list(pairwise ~ condsFile), adjust = "tukey")
+
+# Simple linear regression with difference score for age-of-emergence
+
+# Select relevant columns for Memory use regression
+No_LD_wide_MU <- No_LD %>% 
+  select(participant, condsFile, mean_MU, age, age.ct)
+
+# Made wide
+No_LD_wide_MU <- pivot_wider(No_LD_wide_MU, names_from = condsFile, values_from = mean_MU)
+
+# Get difference scores
+No_LD_wide_MU$diffscores <- No_LD_wide_MU$totalResponse - No_LD_wide_MU$noDelay
+
+# Remove NA's
+noNA_MU <- na.omit(No_LD_wide_MU)
+
+# Regression for Memory use
+MU_model <- lm(diffscores ~ age, data = noNA_MU)
+
+pMU <- ggplot(noNA_MU, aes(x=age, y=diffscores)) +
+  geom_point() +
+  geom_smooth(method=lm , color="black", fill="grey", se=TRUE) +
+  scale_y_continuous(limits = c(-5,10)) +
+  theme_classic()
+
+# x-intercept is -b0/b1
+deltaMethod(MU_model, "-(Intercept)/age", level = 0.95)
+```
+
+# Additional (exploratory and supplemental) analyses
+
+### MU Free VS Total
+
+```{r hypotheses 3 and 4}
+# Make sure dplyr is loaded
+library(dplyr)
+
+# Set cond-type to say whether it was Free-response or Total-response
+condType_data <- no1shot %>%
+  mutate(condType = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "Total",
+    condsFile %in% c("noDelay", "longDelay") ~ "Free",
+    TRUE ~ NA_character_
+  ))
+
+# Average over participant and condition
+freeVtotal <- condType_data %>%
+  group_by(participant, condType) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE),
+            age = first(age),
+            .groups = 'drop')
+
+# Look at distribution of data
+hist(freeVtotal$mean_MU)
+
+# Model
+freeVtotal_glmm <- glmer(mean_MU ~ condType + (1|participant),
+                 data = freeVtotal, 
+                    family = gaussian(link = "identity"))
+
+# Below runs model diagnostic plots and tests
+plot(density(freeVtotal$mean_MU), xlim=c(-50, 50), ylim=c(0, 0.6), 
+     main='M_1 y_hat')
+lines(density(predict(freeVtotal_glmm, type='response') ), col='red')
+
+plot(freeVtotal_glmm)
+
+residuals <- residuals(freeVtotal_glmm)
+qqnorm(residuals)
+qqline(residuals, col = "red")
+
+# Use check_model from performance
+library(performance)
+check_model(freeVtotal_glmm)
+
+# Compare full model with null model
+MUfree_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = freeVtotal, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(freeVtotal_glmm),
+                   r.squaredGLMM(freeVtotal_glmm,MUfree_null))
+
+anova(MUfree_null,freeVtotal_glmm)
+
+# Get the summary
+summary(freeVtotal_glmm)
+MUfreeAov
+```
+
+### Effect size
+
+```{r effect sizes}
+
+# Get eta squared
+library(effectsize)
+model <- lmer(mean_StudyTime ~ age.ct * condsFile + (1 | participant), data = study_time)
+eta_squared(model)
+
+model_mu <- lmer(mean_MU ~ age.ct * condsFile + (1 | participant), data = MU_data)
+eta_squared(model_mu)
+```
+
+### KS Test
+
+This test is to see how distributed our ages are.
+
+```{r ks test}
+# Run the KS test
+ks.test(MU_data$age, "punif", 
+        min(MU_data$age), 
+        max(MU_data$age))
+
+# Plot the density of actual data
+plot(density(MU_data$age), 
+     main = "Age Distribution vs Uniform", 
+     xlab = "Age", 
+     ylab = "Density", 
+     xlim = c(min(MU_data$age), max(MU_data$age)),
+     ylim = c(0,0.6),
+     lwd = 2)
+
+# Add a horizontal line for the uniform distribution's density
+abline(h = 1 / (max(MU_data$age) - min(MU_data$age)), 
+       col = "red", lty = 2, lwd = 2)
+
+legend("topright", legend = c("Observed Density", "Uniform Density"),
+       col = c("black", "red"), lty = c(1,2), lwd = 2)
+```
+
+### Exploratory analyses
+
+#### Metacognitive questions
+
+```{r metacog questions}
+# Read in data
+metacog <- read.csv("data/metacog.csv",header=TRUE)
+
+# Subset based on included participants
+metacog_d <- metacog[metacog$participant %in% data$participant, ]
+
+# Replace "Both" with NA
+metacog_d <- metacog_d %>%
+  mutate(across(everything(), ~ replace(.x, .x == "Both", NA)))
+
+# Make it into a table
+metaSum <- cbind(easy= table(metacog_d$easy),again =table(metacog_d$again)) %>% data.frame()
+
+# Run the binary tests
+easyTest <- binom.test(metaSum$easy[2],sum(metaSum$easy),0.5)
+againTest <- binom.test(metaSum$again[2],sum(metaSum$again),0.5)
+
+# Get the results
+metaSum
+easyTest
+againTest
+```
+
+#### Kendall correlation
+
+"Study time and performance: We will use a Kendall correlation to investigate whether a child’s study time is positively related to MU(total)."
+
+```{r kendall correlation with MUtotal}
+
+# Study time w/ MU(total)
+oneshotOnly <- no1shot %>%
+  filter((condsFile %in% c("noDelayClosing", "longDelayClosing")))
+
+oneshotOnly <- oneshotOnly %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+kendall_testTotal <- cor.test(oneshotOnly$mean_MU, oneshotOnly$mean_StudyTime, method = "kendall")
+kendall_testTotal
+
+# Study time w/ MU(free)
+multishotOnly <- multiDataTrialSum1Trip %>%
+  filter((condsFile %in% c("noDelay", "longDelay")))
+
+multishotOnly <- multishotOnly %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+kendall_test <- cor.test(multishotOnly$mean_MU, multishotOnly$mean_StudyTime, method = "kendall")
+kendall_test
+```
+
+#### Regression between One-shot MU and age
+
+```{r age and one shot mu regression}
+
+# Make data wide
+MU_wide <- pivot_wider(
+  MU_data,
+  id_cols = c(participant, age),
+  names_from = condsFile,
+  values_from = mean_MU
+)
+
+# Run simple linear regression
+age_MU_lm <- lm(totalResponse ~ age, data = MU_wide)
+summary(age_MU_lm)
+
+# Plot
+library(ggplot2)
+ggplot(MU_wide, aes(x = age, y = totalResponse)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  scale_y_continuous(breaks = seq(-6, 10, by = 2), limits = c(-6, 10)) +
+  scale_x_continuous(breaks = seq(4.5, 7.0, by = 0.5), limits = c(4.5, 7.0)) +
+  labs(
+    x = "Age",
+    y = "MU in One-shot"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.line = element_line(),
+    axis.ticks = element_line(),
+    axis.text = element_text(size = 16),   # tick labels bigger
+    axis.title = element_text(size = 18)   # axis labels bigger
+  )
+```
+
+#### Regression between MU in One-shot and MU in Long-delay
+
+```{r mu ratio}
+
+# Run sumple regression
+MU_lm <- lm(longDelay ~ totalResponse, data = MU_wide)
+summary(MU_lm)
+
+# Get r
+r <- cor(MU_wide$longDelay, MU_wide$totalResponse)
+r
+
+# plot
+library(ggplot2)
+ggplot(MU_wide, aes(x = totalResponse, y = longDelay)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+    scale_y_continuous(breaks = seq(-2,8,by = 2), limits = c(-2, 8)) +
+    scale_x_continuous(breaks = seq(-2,8, by = 2), limits = c(-2,8)) +
+  labs(
+    x = "MU in One-shot",
+    y = "MU in Long-delay"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),   # no grid lines
+    axis.line = element_line(),      # keep axes
+    axis.ticks = element_line(),
+        axis.text = element_text(size = 16),  
+    axis.title = element_text(size = 18)
+  )
+```
+
+## Supplementary materials
+
+### Additional measures
+
+The following describes the mean and standard deviation for the number of attempts children made on first trips in each condition, the mean and standard deviation for the amount of time children spent in the store for each condition, and the mean and standard deviation for the number of trips in each condition.
+
+```{r additional measures}
+
+# Number of attempts
+add_measures <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_Attempts = mean(totalClickeds, na.rm = TRUE),
+            mean_shelfTime = mean(meanShelfTime, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+# Trips
+
+# Load file
+multiDataTrialSum <- read.csv("data/Experiment1_allTrips.csv", header = TRUE)
+
+allTrips <- multiDataTrialSum %>%
+  filter(!condsFile == "oneShot3.2") %>%
+  filter(!condsFile == "oneShotClosing")
+
+# Rename Closing trials as Total-response
+allTrips <- allTrips %>%
+  mutate(condsFile = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "totalResponse",
+    TRUE ~ condsFile  # Keep the original value for all other cases
+  ))
+
+trips <- allTrips %>%
+  group_by(participant, condsFile) %>%
+  summarize(meanTrips = mean(nTrip, na.rm = TRUE),
+            age = first(age),
+            .groups = 'drop')
+
+# Get N, change condition as needed
+add_measures %>%
+  filter(condsFile == "totalResponse", !is.na(mean_Attempts)) %>%
+  summarise(n_unique = n_distinct(participant))
+
+# Mean and standard deviation for each
+# attempts
+mean(add_measures$mean_Attempts[add_measures$condsFile == "noDelay"])
+sd(add_measures$mean_Attempts[add_measures$condsFile == "noDelay"])
+
+mean(add_measures$mean_Attempts[add_measures$condsFile == "longDelay"])
+sd(add_measures$mean_Attempts[add_measures$condsFile == "longDelay"])
+
+mean(add_measures$mean_Attempts[add_measures$condsFile == "totalResponse"])
+sd(add_measures$mean_Attempts[add_measures$condsFile == "totalResponse"])
+
+# shelf time
+mean(add_measures$mean_shelfTime[add_measures$condsFile == "noDelay"])
+sd(add_measures$mean_shelfTime[add_measures$condsFile == "noDelay"])
+
+mean(add_measures$mean_shelfTime[add_measures$condsFile == "longDelay"])
+sd(add_measures$mean_shelfTime[add_measures$condsFile == "longDelay"])
+
+mean(add_measures$mean_shelfTime[add_measures$condsFile == "totalResponse"])
+sd(add_measures$mean_shelfTime[add_measures$condsFile == "totalResponse"])
+
+# trips
+mean(trips$meanTrips[trips$condsFile == "noDelay"])
+sd(trips$meanTrips[trips$condsFile == "noDelay"])
+
+mean(trips$meanTrips[trips$condsFile == "longDelay"])
+sd(trips$meanTrips[trips$condsFile == "longDelay"])
+
+mean(trips$meanTrips[trips$condsFile == "totalResponse"])
+sd(trips$meanTrips[trips$condsFile == "totalResponse"])
+```
+
+### Old One-shot info
+
+```{r old one shot}
+# Rename Closing trials as Total-response
+multiDataTrialSum <- multiDataTrialSum %>%
+  mutate(condsFile = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "One_Shot",
+    TRUE ~ condsFile  # Keep the original value for all other cases
+  ))
+
+# Needs to be a factor to rename
+multiDataTrialSum$condsFile <- as.factor(multiDataTrialSum$condsFile)
+
+# Rename
+levels(multiDataTrialSum$condsFile)[levels(multiDataTrialSum$condsFile) == "oneShot3.2"] <- "Old_One_Shot"
+levels(multiDataTrialSum$condsFile)[levels(multiDataTrialSum$condsFile) == "oneShotClosing"] <- "Old_One_Shot_closing"
+
+# MU
+# Group by participant and conditions
+MU_suppMaterials <- multiDataTrialSum %>%
+     group_by(participant, condsFile) %>%
+     summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+               age = first(age),
+               .groups = 'drop')
+
+# Get table of summary stats
+MU_suppMaterials %>%
+  group_by(condsFile) %>%
+  summarise(
+    Mean = mean(mean_MU, na.rm = TRUE),
+    SD = sd(mean_MU, na.rm = TRUE),
+    Min = min(mean_MU, na.rm = TRUE),
+    Max = max(mean_MU, na.rm = TRUE),
+    age = first(age),
+    .groups = "drop"
+  )
+
+# Study time
+# Group by participant and condition
+ST_suppMaterials <- multiDataTrialSum %>%
+     group_by(participant, condsFile) %>%
+     summarize(mean_ST = mean(meanListTime, na.rm = TRUE), 
+               age = first(age),
+               .groups = 'drop')
+
+# Get table of summary stats
+ST_suppMaterials %>%
+  group_by(condsFile) %>%
+  summarise(
+    Mean = mean(mean_ST, na.rm = TRUE),
+    SD = sd(mean_ST, na.rm = TRUE),
+    Min = min(mean_ST, na.rm = TRUE),
+    Max = max(mean_ST, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Remove total-response trials
+noTR <- MU_suppMaterials %>%
+  filter(!condsFile == "Old_One_Shot_closing") %>%
+  filter(!condsFile == "One_Shot")
+
+# Center age
+noTR$age.ct <- noTR$age - mean(noTR$age)
+
+# Model for MU
+MU_Old_oneShot <- glmer(mean_MU ~ condsFile + + age.ct + age.ct*condsFile +
+                          (1|participant), 
+                    data = noTR, 
+                    family = gaussian(link = "identity"))
+
+summary(MU_Old_oneShot)
+MU_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = noTR, family = gaussian(link = "identity"))
+MUAov <- cbind(car::Anova(MU_Old_oneShot),
+                   r.squaredGLMM(MU_Old_oneShot,MU_null))
+
+# Effect size MU
+library(effectsize)
+model <- lmer(mean_MU  ~ condsFile + (1 | participant), data = noTR)
+eta_squared(model)
+
+model <- lmer(mean_MU  ~ age.ct + (1 | participant), data = noTR)
+eta_squared(model)
+
+model <- lmer(mean_MU  ~ age.ct*condsFile + (1 | participant), data = noTR)
+eta_squared(model)
+
+# Model for Study time
+# Remove total-response trials
+noTR_ST <- ST_suppMaterials %>%
+  filter(!condsFile == "Old_One_Shot_closing") %>%
+  filter(!condsFile == "One_Shot")
+
+noTR_ST$age.ct <- noTR_ST$age - mean(noTR_ST$age)
+
+ST_Old_oneShot <- glmer(mean_ST ~ condsFile + age.ct + age.ct*condsFile + 
+                          (1|participant), 
+                         data = noTR_ST, 
+                         family = inverse.gaussian(link = "identity"), nAGQ = 0)
+
+summary(ST_Old_oneShot)
+ST_null <- lmer(mean_ST ~ 1 + (1|participant), 
+                     data = noTR_ST)
+STAov <- cbind(car::Anova(ST_Old_oneShot),
+                   r.squaredGLMM(ST_Old_oneShot,ST_null))
+
+# Effect sizes
+model <- lmer(mean_ST  ~ condsFile + (1 | participant), data = noTR_ST)
+eta_squared(model)
+
+model <- lmer(mean_ST  ~ age.ct + (1 | participant), data = noTR_ST)
+eta_squared(model)
+
+model <- lmer(mean_ST  ~ age.ct*condsFile + (1 | participant), data = noTR_ST)
+eta_squared(model)
+
+## Free VS Total response
+# Set cond-type to say whether it was Free-response or Total-response
+condType_data_supp <- multiDataTrialSum %>%
+  mutate(condType = case_when(
+    condsFile %in% c("One_Shot", "Old_One_Shot_closing") ~ "Total",
+    condsFile %in% c("noDelay", "longDelay", "Old_One_Shot") ~ "Free",
+    TRUE ~ NA_character_
+  ))
+
+# Average over participant and condition
+freeVtotal_supp <- condType_data_supp %>%
+  group_by(participant, condType) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE),
+            age = first(age),
+            .groups = 'drop')
+
+# Model
+freeVtotal_glm_supp <- glmer(mean_MU ~ condType + (1|participant),
+                 data = freeVtotal_supp, 
+                    family = gaussian(link = "identity"))
+
+MUsupp_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = freeVtotal_supp, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(freeVtotal_glm_supp),
+                   r.squaredGLMM(freeVtotal_glm_supp,MUsupp_null))
+
+# Effect size
+model <- lmer(mean_MU  ~ condType + (1 | participant), data = freeVtotal_supp)
+eta_squared(model)
+
+# Get mean of total-response no-delay and long-delay to compare
+mean(no1shot$meanMU[no1shot$condsFile == "noDelayClosing"])
+sd(no1shot$meanMU[no1shot$condsFile == "noDelayClosing"])
+
+mean(no1shot$meanMU[no1shot$condsFile == "longDelayClosing"])
+sd(no1shot$meanMU[no1shot$condsFile == "longDelayClosing"])
+
+
+# Model
+freeVtotal_st_supp <- lmer(mean_StudyTime ~ condType + (1|participant),
+                 data = freeVtotal_supp)
+
+STsupp_null <- lmer(mean_StudyTime ~ 1 + (1|participant), 
+                     data = freeVtotal_supp)
+STAov <- cbind(car::Anova(freeVtotal_st_supp),
+                   r.squaredGLMM(freeVtotal_st_supp,STsupp_null))
+
+```
+
+#### Screen use
+
+```{r screen use}
+
+# Group by participant 
+participant_data <- data %>%
+  group_by(participant) %>%
+  slice(1) %>%
+    ungroup()
+
+# Organize into numeric data
+participant_data <- participant_data %>%
+  mutate(screen_use_numeric = case_when(
+    screen_use_hour == "0" ~ 0,
+    screen_use_hour == "0-1 hour" ~ 1,
+    screen_use_hour == "1-2 hours" ~ 2,
+    screen_use_hour == "2-3 hours" ~ 3,
+    TRUE ~ NA_real_
+  ))
+
+# Get mean and SD
+mean(participant_data$screen_use_numeric, na.rm = T)
+sd(participant_data$screen_use_numeric, na.rm = T)
+
+```
+
+#### All trips
+
+```{r all trips process}
+# Get mean and sd for each condition
+mean(data$meanMU[data$condsFile == "noDelay"])
+sd(data$meanMU[data$condsFile == "noDelay"])
+
+mean(data$meanMU[data$condsFile == "longDelay"])
+sd(data$meanMU[data$condsFile == "longDelay"])
+
+mean(data$meanMU[data$condsFile == "totalResponse"])
+sd(data$meanMU[data$condsFile == "totalResponse"])
+
+# study time
+mean(data$meanListTime[data$condsFile == "noDelay"])
+sd(data$meanListTime[data$condsFile == "noDelay"])
+
+mean(data$meanListTime[data$condsFile == "longDelay"])
+sd(data$meanListTime[data$condsFile == "longDelay"])
+
+mean(data$meanListTime[data$condsFile == "totalResponse"])
+sd(data$meanListTime[data$condsFile == "totalResponse"])
+```
+
+##### Study time
+
+```{r all trips study time}
+# Average over all trials for each condition, for each child, as per preregistration
+study_time <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+# Center age
+study_time$age.ct <- study_time$age - mean(study_time$age)
+
+# make sure condition is a factor
+study_time$condsFile <- as.factor(study_time$condsFile)
+
+# Run model
+studyTime_all <- glmer(mean_StudyTime ~ condsFile + age.ct + age.ct*condsFile + (1|participant), 
+                         data = study_time, 
+                         family = inverse.gaussian(link = "identity"), nAGQ = 0)
+
+mixConTime_GLMM_null <- glmer(mean_StudyTime ~ 1 + (1|participant), 
+                              data = study_time, 
+                              family = inverse.gaussian(link = "identity"), nAGQ = 0)
+mixTimeConAov <- cbind(car::Anova(studyTime_all),
+                       r.squaredGLMM(studyTime_all,mixConTime_GLMM_null)) 
+
+# Effect size
+library(effectsize)
+model <- lmer(mean_StudyTime ~ condsFile + (1|participant), 
+                         data = study_time)
+eta_squared(model)
+
+model <- lmer(mean_StudyTime ~ age.ct + (1|participant), 
+                         data = study_time)
+eta_squared(model)
+
+model <- lmer(mean_StudyTime ~ age.ct*condsFile + (1|participant), 
+                         data = study_time)
+eta_squared(model)
+```
+
+##### MU
+
+```{r all trips mu}
+# Average over participant and condition
+MU_data <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE), 
+            age = first(age), 
+            .groups = 'drop')
+
+# Center age
+MU_data$age.ct <- MU_data$age - mean(MU_data$age)
+
+# Run the model
+MU_all <- glmer(mean_MU ~ condsFile + age.ct + age.ct*condsFile + (1|participant), 
+                    data = MU_data, 
+                    family = gaussian(link = "identity"))
+
+# Get the p value, and R squared
+MUfree_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = MU_data, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(MU_all),
+                   r.squaredGLMM(MU_all,MUfree_null))
+
+# Effect size
+model <- lmer(mean_MU ~ condsFile + (1|participant), 
+                         data = MU_data)
+eta_squared(model)
+
+model <- lmer(mean_MU ~ age.ct + (1|participant), 
+                         data = MU_data)
+eta_squared(model)
+
+model <- lmer(mean_MU ~ age.ct*condsFile + (1|participant), 
+                         data = MU_data)
+eta_squared(model)
+```
+
+### Comparisons with Liang et al.
+
+Trips
+
+```{r trips}
+
+# Get mean and SD
+mean(multiDataTrialSum$nTrip[multiDataTrialSum$condsFile == "noDelay"],)
+mean(multiDataTrialSum$nTrip[multiDataTrialSum$condsFile == "longDelay"],)
+sd(multiDataTrialSum$nTrip[multiDataTrialSum$condsFile == "noDelay"],)
+sd(multiDataTrialSum$nTrip[multiDataTrialSum$condsFile == "longDelay"],)
+```
+
+Streak correct
+
+```{r streak correct}
+# Average over participant and condition
+Streak_data <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_Streak = mean(meanCorBefInc, na.rm = TRUE), 
+            .groups = 'drop')
+
+# Get mean and SD
+mean(Streak_data$mean_Streak[Streak_data$condsFile == "noDelay"],)
+mean(Streak_data$mean_Streak[Streak_data$condsFile == "longDelay"],)
+sd(Streak_data$mean_Streak[Streak_data$condsFile == "noDelay"],)
+sd(Streak_data$mean_Streak[Streak_data$condsFile == "longDelay"],)
+
+```
+
+### Random effects comparisons
+
+Study time:
+
+```{r random effect comparisons}
+# Following Barr et al (2013) we start with the maximal model
+
+# Center age
+data$age.ct <- data$age - mean(data$age)
+
+# make sure condition is a factor
+data$condsFile <- as.factor(data$condsFile)
+
+# Maximal model
+studytime_m1 <- glmer(meanListTime ~ condsFile + age.ct + age.ct*condsFile + (1 + condsFile|participant) + (1|trial), 
+                       data = data, 
+                       family = inverse.gaussian(link = "identity"), nAGQ = 0)
+
+# Model without correlations between slopes and intercept
+studytime_m2 <- glmer(meanListTime ~ condsFile + age.ct + age.ct*condsFile + (1|participant) + (0 + condsFile|participant) + (1|trial), 
+                        data = data, 
+                        family = inverse.gaussian(link = "identity"), nAGQ = 0)
+
+# Using repca, assess dimensionality
+rePCA(studytime_m2)
+
+# Compare with model with one less step complexity
+studytime_m3 <- glmer(meanListTime ~ condsFile + age.ct + age.ct*condsFile + 
+                        (0 + condsFile|participant) + (1|trial), 
+                        data = data, 
+                        family = inverse.gaussian(link = "identity"), nAGQ = 0)
+
+# Compare
+anova(studytime_m2, studytime_m3)
+
+```
+
+Memory Use:
+
+```{r random effects memory use}
+# Reference level should be One-shot, sum contrasts
+data$condsFile <- factor(
+  data$condsFile,
+  levels = c("longDelay", "noDelay", "totalResponse")
+)
+contrasts(data$condsFile) <- contr.sum(3)
+
+# Maximal model
+MU_m1 <- lmer(meanMU ~ condsFile + age.ct + age.ct*condsFile + (1 + condsFile|participant) + (1|trial), 
+                data = data)
+
+# Model without correlations between slopes and intercept
+MU_m2 <- lmer(meanMU ~ condsFile + age.ct + age.ct*condsFile + (1|participant) + (0 + condsFile|participant) + (1|trial), 
+                data = data)
+
+# Model with slopes and no intercept
+MU_m3 <- lmer(meanMU ~ condsFile + age.ct + age.ct*condsFile + (0 + condsFile|participant) + (1|trial), 
+                data = data)
+
+# Only participant and trial intercepts
+MU_m4 <- lmer(meanMU ~ condsFile + + age.ct + age.ct*condsFile + 
+                (1|participant) + (1|trial), 
+                data = data)
+
+# Only slopes
+MU_m5 <- lmer(meanMU ~ condsFile + age.ct + age.ct*condsFile + (1 + condsFile|participant), 
+                data = data)
+
+# Only participant intercept
+MU_m6 <- lmer(meanMU ~ condsFile + age.ct + age.ct*condsFile + (1|participant), 
+                data = data)
+```
+
+# Plots
+
+##### Figure 6, Study time and Memory Use across conditions
+
+```{r fig 6}
+# Rename values in the 'condsFile' column
+study_time$condsFile <- as.character(study_time$condsFile)
+study_time$condsFile[study_time$condsFile == "noDelay"] <- "No-delay"
+study_time$condsFile[study_time$condsFile == "longDelay"] <- "Long-delay"
+study_time$condsFile[study_time$condsFile == "totalResponse"] <- "One-shot"
+
+# 95% CI function
+ci95 <- function(x) {
+  x <- x[!is.na(x)]
+  m  <- mean(x)
+  se <- sd(x) / sqrt(length(x))
+  # t-critical value for 95 % CI
+  tcrit <- qt(0.975, df = length(x) - 1)
+  c(lower = m - tcrit * se,
+    upper = m + tcrit * se)
+}
+
+par(mfrow = c(1, 2))
+
+# study time ------------
+# Calculate means
+means <- tapply(study_time$mean_StudyTime, study_time$condsFile, mean)
+
+# Define the x-axis levels (to match the ggplot2 ordering)
+conds_levels <- c("No-delay", "Long-delay", "One-shot")
+x_positions <- 1:length(conds_levels)
+
+# Create an empty plot
+plot(
+  x_positions, means[conds_levels], 
+  type = "n", xaxt = "n", yaxt = "n", ylim = c(0, 30.0), xlim = c(0.5, 3.5),
+  xlab = "", ylab = "Mean Study Time (seconds)", 
+  main = "",
+  cex.lab = 1.5,
+  cex.axis = 1.5,
+  cex.main = 1.1
+)
+
+axis(2, at = seq(0, 28, by = 4), cex.axis = 1.2)
+
+participants <- unique(study_time$participant)
+
+for (p in participants) {
+  this_participant <- study_time[study_time$participant == p, ]
+  if (nrow(this_participant) == 3) {
+    # Get the x positions for this participant’s conditions
+    x_vals <- match(this_participant$condsFile, conds_levels)
+    y_vals <- this_participant$mean_StudyTime
+    lines(x_vals, y_vals, col = adjustcolor("#009E73", alpha.f = 0.3), lwd = 1)
+  }
+}
+
+# Add x-axis labels normally
+axis(1, at = x_positions, labels = conds_levels, cex.axis = 1.2)
+
+# Add points for each participant
+for (i in 1:length(conds_levels)) {
+  condition_data <- study_time[study_time$condsFile == conds_levels[i], ]
+  points(rep(x_positions[i], nrow(condition_data)), condition_data$mean_StudyTime, 
+         pch = 1, col = "#0072B2")
+}
+
+# Add points for the means
+points(x_positions, means[conds_levels], pch = 10, col = "black")
+
+# Add a solid line connecting the means
+#lines(x_positions, means[conds_levels], col = "black", lwd = 2)
+
+# Add horizontal segments at the means (optional, similar to ggplot2's stat_summary)
+segments(
+  x_positions - 0.1, means[conds_levels], 
+  x_positions + 0.1, means[conds_levels],
+  col = "black", lwd = 3.0
+)
+
+# Add mean labels for each condition
+#text(x_positions, means[conds_levels] + 3, 
+#     labels = round(means[conds_levels], 2), cex = 1.5, col = "black")
+
+# Get means again, just to be sure
+means <- tapply(study_time$mean_StudyTime, study_time$condsFile, mean)
+
+# compute CIs for study time
+cis <- tapply(study_time$mean_StudyTime,
+              study_time$condsFile,
+              ci95)
+
+# pull them out in the plotting order
+lower_bounds <- sapply(cis[conds_levels], function(x) x["lower"])
+upper_bounds <- sapply(cis[conds_levels], function(x) x["upper"])
+
+# Add vertical error bars using arrows()
+for (i in 1:length(x_positions)) {
+  arrows(
+    x0 = x_positions[i], y0 = lower_bounds[i], 
+    x1 = x_positions[i], y1 = upper_bounds[i], 
+    length = 0.1, angle = 90, code = 3, col = "#D55E00", lwd = 3.5
+  )
+}
+
+
+
+# MU ------------
+MU_data$condsFile <- as.character(MU_data$condsFile)
+MU_data$condsFile[MU_data$condsFile == "noDelay"] <- "No-delay"
+MU_data$condsFile[MU_data$condsFile == "longDelay"] <- "Long-delay"
+MU_data$condsFile[MU_data$condsFile == "totalResponse"] <- "One-shot"
+
+# Calculate means and standard errors
+means <- tapply(MU_data$mean_MU, MU_data$condsFile, mean)
+
+# Calculate standard deviations and sample sizes for each condition
+sds <- tapply(MU_data$mean_MU, MU_data$condsFile, sd)
+n_per_condition <- tapply(MU_data$mean_MU, MU_data$condsFile, length)
+
+# Calculate standard errors
+se <- sds / sqrt(n_per_condition)
+
+# Define the x-axis levels (to match the ggplot2 ordering)
+conds_levels <- c("No-delay", "Long-delay", "One-shot")
+x_positions <- 1:length(conds_levels)
+
+# Create an empty plot
+plot(
+  x_positions, means[conds_levels], 
+  type = "n", xaxt = "n", yaxt = "n", ylim = c(-5, 10.0), xlim = c(0.5, 3.5),
+  xlab = "", ylab = "Mean Memory Usage (items)", 
+  main = "",
+  cex.lab = 1.5,
+  cex.axis = 1.5,
+  cex.main = 1.1
+)
+
+axis(2, at = seq(-5, 10, by = 1), labels = ifelse(seq(-5, 10, by = 1) %% 2 == 0, seq(-5, 10, by = 1), ""), cex.axis = 1.2)
+
+participants <- unique(MU_data$participant)
+
+for (p in participants) {
+  this_participant <- MU_data[MU_data$participant == p, ]
+  if (nrow(this_participant) == 3) {
+    # Get the x positions for this participant’s conditions
+    x_vals <- match(this_participant$condsFile, conds_levels)
+    y_vals <- this_participant$mean_MU
+    lines(x_vals, y_vals, col = adjustcolor("#009E73", alpha.f = 0.3), lwd = 1)
+  }
+}
+
+# Add x-axis labels normally
+axis(1, at = x_positions, labels = conds_levels, cex.axis = 1.2)
+
+# Add points for each participant
+for (i in 1:length(conds_levels)) {
+  condition_data <- MU_data[MU_data$condsFile == conds_levels[i], ]
+  points(rep(x_positions[i], nrow(condition_data)), condition_data$mean_MU, 
+         pch = 1, col = "#0072B2")
+}
+
+# Add points for the means
+points(x_positions, means[conds_levels], pch = 10, col = "black")
+
+# Add a solid line connecting the means
+#lines(x_positions, means[conds_levels], col = "black", lwd = 2)
+
+# Add horizontal segments at the means (optional, similar to ggplot2's stat_summary)
+segments(
+  x_positions - 0.1, means[conds_levels], 
+  x_positions + 0.1, means[conds_levels],
+  col = "black", lwd = 3.0
+)
+
+# Add mean labels for each condition
+#text(x_positions, means[conds_levels] + 2, 
+#     labels = round(means[conds_levels], 2), cex = 1.5, col = "black")
+
+# Get means again, just to be sure
+means <- tapply(MU_data$mean_MU, MU_data$condsFile, mean)
+
+# compute CIs for study time
+cis <- tapply(MU_data$mean_MU,
+              MU_data$condsFile,
+              ci95)
+
+# pull them out in the plotting order
+lower_bounds <- sapply(cis[conds_levels], function(x) x["lower"])
+upper_bounds <- sapply(cis[conds_levels], function(x) x["upper"])
+
+# Add vertical error bars using arrows()
+for (i in 1:length(x_positions)) {
+  arrows(
+    x0 = x_positions[i], y0 = lower_bounds[i], 
+    x1 = x_positions[i], y1 = upper_bounds[i], 
+    length = 0.1, angle = 90, code = 3, col = "#D55E00", lwd = 3.5
+  )
+}
+```
+
+##### Figure 7, Age interaction
+
+```{r fig 7}
+par(mfrow = c(1, 2))
+
+# study time --------------
+# Define levels and colors
+conds_levels <- c("No-delay", "Long-delay", "One-shot")
+colors <- c("#0072B2", "#D55E00", "#009E73")
+
+# Create empty plot
+plot(
+  NA, xlim = c(4.5,7.0), ylim = c(0, 15),
+  xlab = "Age", ylab = "Study time (seconds)",
+  cex.lab = 1.6, cex.axis = 1.5, yaxt = "n",
+)
+
+axis(2, at = seq(0, 15, by = 3), cex.axis = 1.2)
+
+for (i in seq_along(conds_levels)) {
+  # Filter data
+  condition_data <- study_time[study_time$condsFile == conds_levels[i], ]
+  
+  # Scatter points
+  #points(condition_data$age, condition_data$mean_StudyTime,
+  #       col = adjustcolor(colors[i], alpha.f = 0.4), pch = 16)
+  
+  # Fit linear model
+  lm_fit <- lm(mean_StudyTime ~ age, data = condition_data)
+  
+  # Create a sequence of ages for smooth line
+  new_ages <- seq(min(condition_data$age), max(condition_data$age), length.out = 100)
+  
+  # Predict with confidence intervals
+  pred <- predict(lm_fit, newdata = data.frame(age = new_ages), interval = "confidence")
+  
+  # Draw CI as a polygon
+  polygon(
+    c(new_ages, rev(new_ages)),
+    c(pred[,"lwr"], rev(pred[,"upr"])),
+    col = adjustcolor(colors[i], alpha.f = 0.2), border = NA
+  )
+  
+  # Draw regression line
+  lines(new_ages, pred[,"fit"], col = colors[i], lwd = 2)
+}
+
+# Add legend
+#legend("topright", legend = conds_levels, col = colors, lty = 1, lwd = 2, pch = 16)
+
+# MU ##########
+conds_levels <- c("No-delay", "Long-delay", "One-shot")
+colors <- c("#0072B2", "#D55E00", "#009E73")
+
+# Create empty plot
+plot(
+  NA, xlim = c(4.5,7.0), ylim = c(-2,7),
+  xlab = "Age", ylab = "Memory Usage (items)", 
+  cex.lab = 1.6, cex.axis = 1.5, yaxt = "n",
+)
+
+axis(2, at = seq(-2, 7, by = 2), cex.axis = 1.2)
+
+for (i in seq_along(conds_levels)) {
+  # Filter data
+  condition_data <- MU_data[MU_data$condsFile == conds_levels[i], ]
+  
+  # Scatter points
+  #points(condition_data$age, condition_data$mean_StudyTime,
+  #       col = adjustcolor(colors[i], alpha.f = 0.4), pch = 16)
+  
+  # Fit linear model
+  lm_fit <- lm(mean_MU ~ age, data = condition_data)
+  
+  # Create a sequence of ages for smooth line
+  new_ages <- seq(min(condition_data$age), max(condition_data$age), length.out = 100)
+  
+  # Predict with confidence intervals
+  pred <- predict(lm_fit, newdata = data.frame(age = new_ages), interval = "confidence")
+  
+  # Draw CI as a polygon
+  polygon(
+    c(new_ages, rev(new_ages)),
+    c(pred[,"lwr"], rev(pred[,"upr"])),
+    col = adjustcolor(colors[i], alpha.f = 0.2), border = NA
+  )
+  
+  # Draw regression line
+  lines(new_ages, pred[,"fit"], col = colors[i], lwd = 2)
+}
+
+# Add legend
+#legend("topright", legend = conds_levels, col = colors, lty = 1, lwd = 2, pch = 16)
+
+```
+
+Difference score plots:
+
+```{r age of emergence difference score plot}
+
+# Plot
+pMU <- ggplot(noNA_MU, aes(x=age, y=diffscores)) +
+  geom_point() +
+  geom_smooth(method=lm , color="black", fill="grey", se=TRUE) +
+  theme_classic()
+
+pStudytime <- ggplot(noNA_ST, aes(x=age, y=diffscores)) +
+  geom_point() +
+  geom_smooth(method=lm , color="black", fill="grey", se=TRUE) +
+  theme_classic()
+```

@@ -1,0 +1,921 @@
+---
+title: "EM5_2_analysis"
+format: html
+editor: visual
+---
+
+## Manuscript title
+
+How much do you remember when it’s up to you? Measuring memory use without response bias in young children
+
+Last edited: 10/3/25
+
+In this file there is the preregistered main analyses, secondary analyses, as well as the analyses and descriptive statistics used for the supplementary materials.
+
+Variable and data descriptions:
+
+| Experiment2_data.csv | ages.csv | metacog_exp2.csv | lastQ_everyone.csv | Experiment2_allTrips.csv |
+|----|----|----|----|----|
+| participant: participant ID | participant: participant ID | participant: participant ID | participant: participant ID | participant: participant ID |
+| condsFile: condition | Age: rounded age | Harder_clean: child's response to which condition they thought was harder | Age: rounded age | condsFile: condition |
+| order: counterbalanced order |  | Closing_harder_clean: child's response to whether they thought the total-response trials were harder than the free-response trials | How you played: children's responses to the final, open ended strategy question in Exp 2 | order: counterbalanced order |
+| trial: trial number |  | Guess_clean: child's response to whether they felt they were guessing in the total-response trials |  | trial: trial number |
+| nTrip: trip ID (always 1) |  |  |  | nTrip: trip ID |
+| totalListTime: absolute time studying the list |  |  |  | totalListTime: absolute time studying the list |
+| meanListTime: average time studying the list (same as totalListTime since this data is for first-trips only) |  |  |  | meanListTime: average time studying the list |
+| totalShelfTime: absolute time selecting items in the store |  |  |  | totalShelfTime: absolute time selecting items in the store |
+| meanShelfTime: average selecting items in the store (same as totalShelf Time since this data is for first-trips only) |  |  |  | meanShelfTime: average selecting items in the store |
+| totalTime: absolute time in the first trip studying the list and selecting items in the store |  |  |  | totalTime: absolute time in the first trip studying the list and selecting items in the store |
+| totalCorrect: sum of correct selections |  |  |  | totalCorrect: sum of correct selections |
+| meanCorrect: mean of correct selections (same as totalCorrect since this data is for first-trips only) |  |  |  | meanCorrect: mean of correct selections |
+| meanCorBefInc: mean correct selections before making an incorrect selection |  |  |  | meanCorBefInc: mean correct selections before making an incorrect selection |
+| totalInCorrect: sum of incorrect selections |  |  |  | totalInCorrect: sum of incorrect selections |
+| meanIncorrect: mean of incorrect selections (same as totalInCorrect since this data is for first-trips only) |  |  |  | meanIncorrect: mean of incorrect selections |
+| maxCorrect: maximum amount of correct selections (same as totalCorrect since this data is for first-trips only) |  |  |  | maxCorrect: maximum amount of correct selections |
+| maxIncorrect: maximum amount of incorrect selections (same as totalInCorrect since this data is for first-trips only) |  |  |  | maxIncorrect: maximum amount of incorrect selections |
+| totalClickeds: sum of all selections made |  |  |  | totalClickeds: sum of all selections made |
+| meanclickeds: mean of all selections made (same as totalClickeds since this data is for first-trips only) |  |  |  | meanclickeds: mean of all selections made |
+| meanMU: average value of Memory Use |  |  |  | meanMU: average value of Memory Use |
+| Timestamp: date and time of completion of demographic form |  |  |  | Timestamp: date and time of completion of demographic form |
+| What.is.your.child.s.gender.: child's gender (parent reported) |  |  |  | What.is.your.child.s.gender.: child's gender (parent reported) |
+| What.is.your.child.s.age.: child's age (parent reported) |  |  |  | What.is.your.child.s.age.: child's age (parent reported) |
+| Please.enter.your.child.s.birth.date.: child's birthday (parent reported) |  |  |  | Please.enter.your.child.s.birth.date.: child's birthday (parent reported) |
+| Caregiver.1..What.is.the.highest.level.of.education.: education of caregiver 1 (parent reported) |  |  |  | Caregiver.1..What.is.the.highest.level.of.education.: education of caregiver 1 (parent reported) |
+| Caregiver.2..What.is.the.highest.level.of.education.: education of caregiver 2 (parent reported) |  |  |  | Caregiver.2..What.is.the.highest.level.of.education.: education of caregiver 2 (parent reported) |
+| Is.your.child.currently.going.to.school..If.yes..what.grade...In.the.summer..What.grade.has.your.child.just.completed..: school grade of child (parent reported) |  |  |  | Is.your.child.currently.going.to.school..If.yes..what.grade...In.the.summer..What.grade.has.your.child.just.completed..: school grade of child (parent reported) |
+| Which.group.below.most.accurately.describes.your.child.s.ethnic.background.: child's ethnicity (parent reported) |  |  |  | Which.group.below.most.accurately.describes.your.child.s.ethnic.background.: child's ethnicity (parent reported) |
+| Which.group.help.most.accurately.describes.your.child.s.racial.background.: child's racial identity (parent reported) |  |  |  | Which.group.help.most.accurately.describes.your.child.s.racial.background.: child's racial identity (parent reported) |
+| How.many.days.per.week.does.your.child.spend.using.a.touchscreen.device...e.g..iPad..tablet..smartphone.: days per week child spends using a touchscreen device (parent reported) |  |  |  | How.many.days.per.week.does.your.child.spend.using.a.touchscreen.device...e.g..iPad..tablet..smartphone.: days per week child spends using a touchscreen device (parent reported) |
+| On.these.days..how.many.hours.does.your.child.typically.spend.using.the.touchscreen.device.: hours per day child spends on touchscreen device (parent reported) |  |  |  | On.these.days..how.many.hours.does.your.child.typically.spend.using.the.touchscreen.device.: hours per day child spends on touchscreen device (parent reported) |
+| Which.types.of.activities.does.your.child.usually.engage.in.on.the.touchscreen.device.: purpose of using touchscreen device (parent reported) |  |  |  | Which.types.of.activities.does.your.child.usually.engage.in.on.the.touchscreen.device.: purpose of using touchscreen device (parent reported) |
+| Does.your.child.have.colorblindness.: whether the child is colorblind (parent reported) |  |  |  | Does.your.child.have.colorblindness.: whether the child is colorblind (parent reported) |
+| At.what.age.did.your.child.first.begin.to.play.with.a.touchscreen.device.: age child began to use touchscreen device (parent reported) |  |  |  | At.what.age.did.your.child.first.begin.to.play.with.a.touchscreen.device.: age child began to use touchscreen device (parent reported) |
+| Have.you.ever.had.any.developmental.concerns.or.have.you.ever.been.referred.to.early.intervention..If.yes..what.it.is.: whether the child has received intervention for developmental concerns (parent reported) |  |  |  | Have.you.ever.had.any.developmental.concerns.or.have.you.ever.been.referred.to.early.intervention..If.yes..what.it.is.: whether the child has received intervention for developmental concerns (parent reported) |
+| Does.your.child.hear.any.other.language.other.than.English.on.a.daily.basis..If.yes..which..: other languages child hears besides English (parent reported) |  |  |  | Does.your.child.hear.any.other.language.other.than.English.on.a.daily.basis..If.yes..which..: other languages child hears besides English (parent reported) |
+
+### Load libraries and data
+
+```{r load libs n data}
+# Load libraries & general setup
+library(tidyverse)
+library(ggpubr)
+library(ggforce)
+library(effectsize)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(MuMIn)
+library(MCMCglmm)
+#library(mixedpower)
+library(DHARMa)
+
+# Disable scientific notation
+options(scipen = 999)
+
+# Read in file
+data <- read.csv("data/Experiment2_data.csv", header = TRUE)
+
+# label closing trial
+data$condsFile <- ifelse(data$trial == 4, 
+                       paste0(data$condsFile, "Closing"), 
+                       data$condsFile)
+
+# Read in file for age and combine with data
+ages <- read.csv("data/ages.csv", header = T)
+data <- left_join(data, ages, by = "participant")
+
+# Make output more interpretable by setting it to sum coding
+options(contrasts = c("contr.sum","contr.poly"))
+
+```
+
+## Study time
+
+Preregistration: "Hypotheses will be tested using Generalized Linear Mixed-Effect Models (Lo & Andrews, 2015) with *Condition* as a fixed effect and child (*participant*) as a random intercept, and with appropriate linking functions.
+
+The model for Study Time will have an inverse Gaussian linking function because of its similar distribution to reaction times (Lo & Andrews, 2015)."
+
+### Process data
+
+```{r process study time data}
+# Average over all trials for each condition, for each child, as per preregistration
+summarized_data <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE),
+            mean_Streak = mean(meanCorBefInc, na.rm = TRUE),
+            age = first(Age),
+            .groups = 'drop')
+
+# Make sure condition is a factor
+summarized_data$condsFile <- as.factor(summarized_data$condsFile)
+
+# Remove closing trials for the free-response only analyses
+freeResponseOnly <- summarized_data %>%
+  filter(!(condsFile %in% c("noDelayClosing", "longDelayClosing")))
+```
+
+### Model study time
+
+```{r study time model}
+# Run the model
+studyTimeGlmm <- glmer(mean_StudyTime ~ condsFile + (1|participant), 
+                         data = freeResponseOnly, 
+                         family = inverse.gaussian(link = "identity"))
+
+# Below goes through diagnostic plots and checks
+plot(density(freeResponseOnly$mean_StudyTime), 
+     xlim=c(0, 160), ylim=c(0, 1), main='M_1 y_hat')
+lines(density(predict(studyTimeGlmm, type='response')), col='red')
+
+plot(studyTimeGlmm)
+
+residuals <- residuals(studyTimeGlmm)
+qqnorm(residuals)
+qqline(residuals, col = "red")
+
+library(performance)
+check_model(studyTimeGlmm)
+
+
+# Below we will compare the full model with the null model
+mixConTime_GLMM_null <- glmer(mean_StudyTime ~ 1 + (1|participant), 
+                              data = freeResponseOnly, 
+                              family = inverse.gaussian(link = "identity"))
+mixTimeConAov <- cbind(car::Anova(studyTimeGlmm),
+                       r.squaredGLMM(studyTimeGlmm,mixConTime_GLMM_null)) 
+
+# Compare the models
+anova(mixConTime_GLMM_null,studyTimeGlmm)
+
+# Get summary
+summary(studyTimeGlmm)
+mixTimeConAov
+
+# Pairwise comparisons
+contrasts(freeResponseOnly$condsFile)
+emmeans(studyTimeGlmm, pairwise ~ condsFile)
+```
+
+## Memory Usage
+
+Preregistration: "The model for Memory Usage will have an identity linking function because based on the results of our previous studies, we expect it to follow a normal distribution. If there are substantive violations of the assumptions of these analyses, we will corroborate results with analogous non-parametric tests."
+
+```{r model for MU}
+# View the distribution of MU
+hist(freeResponseOnly$mean_MU)
+
+# Run the model
+MU_GLMM <- glmer(mean_MU ~ condsFile + (1|participant),
+                 data = freeResponseOnly, 
+                    family = gaussian(link = "identity"))
+
+# Below runs diagnostic plots and checks
+plot(density(freeResponseOnly$mean_MU), xlim=c(-50, 50), ylim=c(0, 0.6), 
+     main='M_1 y_hat')
+lines(density(predict(MU_GLMM, type='response') ), col='red')
+
+plot(MU_GLMM)
+
+residuals <- residuals(MU_GLMM)
+qqnorm(residuals)
+qqline(residuals, col = "red")
+
+check_model(MU_GLMM)
+
+# Compare the full vs the null model
+MUfree_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = freeResponseOnly, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(MU_GLMM),
+                   r.squaredGLMM(MU_GLMM,MUfree_null))
+
+anova(MUfree_null,MU_GLMM)
+
+# Get summary
+summary(MU_GLMM)
+MUfreeAov
+
+# pairwise comparisons
+emmeans(MU_GLMM, pairwise ~ condsFile)
+```
+
+## Free VS Total response
+
+### Process data
+
+```{r process free v total}
+library(dplyr)
+# Label cond-type to say if its free or total-response
+summarized_data <- summarized_data %>%
+  mutate(condType = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "Total",
+    condsFile %in% c("noDelay", "longDelay") ~ "Free",
+    TRUE ~ NA_character_
+  ))
+
+# Average over participant and condition
+freeVtotal <- summarized_data %>%
+  group_by(participant, condType) %>%
+  summarize(mean_MU = mean(mean_MU, na.rm = TRUE),
+            mean_StudyTime = mean(mean_StudyTime, na.rm = TRUE),
+            age = first(age),
+            .groups = 'drop')
+```
+
+### Model free V total
+
+```{r free v total model}
+# Observe distribution
+hist(freeVtotal$mean_MU)
+
+# Run the model
+freeVtotal_glmm <- glmer(mean_MU ~ condType + (1|participant),
+                 data = freeVtotal, 
+                    family = gaussian(link = "identity"))
+
+# Run diagnostic plots and checks
+plot(density(freeVtotal$mean_MU), xlim=c(-50, 50), ylim=c(0, 0.6), 
+     main='M_1 y_hat')
+lines(density(predict(freeVtotal_glmm, type='response') ), col='red')
+
+plot(freeVtotal_glmm)
+
+residuals <- residuals(freeVtotal_glmm)
+qqnorm(residuals)
+qqline(residuals, col = "red")
+
+# Compare full with null model
+MUfree_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = freeVtotal, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(freeVtotal_glmm),
+                   r.squaredGLMM(freeVtotal_glmm,MUfree_null))
+
+anova(MUfree_null,freeVtotal_glmm)
+
+# Check summary
+summary(freeVtotal_glmm)
+MUfreeAov
+```
+
+## Secondary analyses
+
+### Kendall correlation
+
+"Study time and performance: We will use a Kendall correlation to investigate whether a child’s study time is positively related to MU from all four conditions (No-delay Free-response, Long-delay Free-response, No-delay Total-response, Long-delay Total-response)."
+
+```{r kendall correlation}
+# Study time w/ MU(total)
+totalResponseOnly <- summarized_data %>%
+  filter((condsFile %in% c("noDelayClosing", "longDelayClosing")))
+kendall_testTotal <- cor.test(totalResponseOnly$mean_MU, totalResponseOnly$mean_StudyTime, method = "kendall")
+kendall_testTotal
+
+# Study time w/ MU(free)
+kendall_test <- cor.test(freeResponseOnly$mean_MU, freeResponseOnly$mean_StudyTime, method = "kendall")
+kendall_test
+```
+
+### Metacognition questions
+
+```{r metacog}
+# Set working directory
+
+# Read in data
+metacog <- read.csv("data/metacog_exp2.csv",header=TRUE)
+
+# Only get participants who were included in analyses
+metacog_d <- metacog[metacog$Participant %in% freeResponseOnly$participant, ]
+
+# Get tables for kids responses
+# Q: Which game did you think was harder?
+metaSum <- cbind(harder= table(metacog_d$Harder_clean)) %>% data.frame()
+# Q: When the store was closing, did the game get harder?
+metaSumClosing <- cbind(Closing= table(metacog_d$Closing_harder_clean)) %>% data.frame()
+# Q: When the store was closing, did you feel like you were guessing or not?
+metaSumGuess <- cbind(Guess = table(metacog_d$Guess_clean)) %>% data.frame()
+
+# Run binomial tests on answers
+harderTest <- binom.test(metaSum$harder[2],sum(metaSum$harder),0.5)
+closingTest <- binom.test(metaSumClosing$Closing[2],sum(metaSumClosing$Closing),0.5)
+guessTest <- binom.test(metaSumGuess$Guess[2],sum(metaSumGuess$Guess),0.5)
+
+harderTest
+closingTest
+guessTest
+```
+
+### Open-ended strategy question
+
+```{r open ended answers}
+all_kids <- read.csv("data/lastQ_everyone.csv", header = T)
+
+# Only included participants
+all_kids <- all_kids[all_kids$Participant %in% data$participant, ]
+
+# Order by age
+all_kids <- all_kids[order(all_kids$Age), ]
+```
+
+### Equivalence test for MU(free) vs MU(total)
+
+**Test**: paired TOSTER t-test with a smallest-effect-size-of-interest (SESOI) of Cohen's dz = 0.4
+
+```{r tost test of mufree n total}
+library(TOSTER)
+
+t_TOST(mean_MU ~ condType, data = freeVtotal, paired = TRUE,
+       eqb = 0.4, eqbound_type = "SMD")
+```
+
+### Effect size
+
+```{r effect sizes}
+
+## Eta squared
+library(effectsize)
+model <- lmer(mean_StudyTime ~ condsFile + (1 | participant), data = freeResponseOnly)
+eta_squared(model)
+
+model <- lmer(mean_MU  ~ condsFile + (1 | participant), data = freeResponseOnly)
+eta_squared(model)
+
+model <- lmer(mean_MU  ~ condType  + (1 | participant), data = freeVtotal)
+eta_squared(model)
+```
+
+## Supplementary Material
+
+### Screen use
+
+```{r screen use}
+# Group by participant
+participant_data <- data %>%
+  group_by(participant) %>%
+  slice(1) %>%
+    ungroup()
+
+# Organize into numeric data
+participant_data <- participant_data %>%
+  mutate(screen_use_numeric = case_when(
+    On.these.days..how.many.hours.does.your.child.typically.spend.using.the.touchscreen.device. == "0" ~ 0,
+    On.these.days..how.many.hours.does.your.child.typically.spend.using.the.touchscreen.device. == "0-1 hour" ~ 1,
+    On.these.days..how.many.hours.does.your.child.typically.spend.using.the.touchscreen.device. == "1-2 hours" ~ 2,
+    On.these.days..how.many.hours.does.your.child.typically.spend.using.the.touchscreen.device. == "2-3 hours" ~ 3,
+    TRUE ~ NA_real_
+  ))
+
+# Get mean and SD
+mean(participant_data$screen_use_numeric, na.rm = T)
+sd(participant_data$screen_use_numeric, na.rm = T)
+```
+
+### All trips
+
+```{r all trips process data}
+# Read in file
+data <- read.csv("data/Experiment2_allTrips.csv", header = TRUE)
+
+# label closing trial
+data$condsFile <- ifelse(data$trial == 4, 
+                       paste0(data$condsFile, "Closing"), 
+                       data$condsFile)
+
+# Read in file for age and combine with data
+ages <- read.csv("data/ages.csv", header = T)
+data <- left_join(data, ages, by = "participant")
+
+# Get mean and sd for each condition
+mean(data$meanMU[data$condsFile == "noDelay"])
+sd(data$meanMU[data$condsFile == "noDelay"])
+
+mean(data$meanMU[data$condsFile == "longDelay"])
+sd(data$meanMU[data$condsFile == "longDelay"])
+
+# study time
+mean(data$meanListTime[data$condsFile == "noDelay"])
+sd(data$meanListTime[data$condsFile == "noDelay"])
+
+mean(data$meanListTime[data$condsFile == "longDelay"])
+sd(data$meanListTime[data$condsFile == "longDelay"])
+
+```
+
+#### Study time
+
+```{r all trips study time}
+# Average over all trials for each condition, for each child, as per preregistration
+summarized_data <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_MU = mean(meanMU, na.rm = TRUE),
+            mean_StudyTime = mean(meanListTime, na.rm = TRUE),
+            mean_Streak = mean(meanCorBefInc, na.rm = TRUE),
+            age = first(Age),
+            .groups = 'drop')
+
+# make sure condition is a factor
+summarized_data$condsFile <- as.factor(summarized_data$condsFile)
+
+# Remove closing trials
+freeResponseOnly_all <- summarized_data %>%
+  filter(!(condsFile %in% c("noDelayClosing", "longDelayClosing")))
+
+# Run the model
+studyTime_all <- glmer(mean_StudyTime ~ condsFile + (1|participant), 
+                         data = freeResponseOnly_all, 
+                         family = inverse.gaussian(link = "identity"))
+
+# Full VS null
+mixConTime_GLMM_null <- glmer(mean_StudyTime ~ 1 + (1|participant), 
+                              data = freeResponseOnly_all, 
+                              family = inverse.gaussian(link = "identity"))
+
+mixTimeConAov <- cbind(car::Anova(studyTime_all),
+                       r.squaredGLMM(studyTime_all,mixConTime_GLMM_null)) 
+
+# Effect size
+library(effectsize)
+model <- lmer(mean_StudyTime ~ condsFile + (1|participant), 
+                         data = freeResponseOnly_all)
+eta_squared(model)
+```
+
+#### MU
+
+```{r all trips mu}
+# Run the model
+MU_GLMM <- glmer(mean_MU ~ condsFile + (1|participant),
+                 data = freeResponseOnly_all, 
+                    family = gaussian(link = "identity"))
+
+# Full VS null
+MUfree_null <- glmer(mean_MU ~ 1 + (1|participant), 
+                     data = freeResponseOnly_all, family = gaussian(link = "identity"))
+MUfreeAov <- cbind(car::Anova(MU_GLMM),
+                   r.squaredGLMM(MU_GLMM,MUfree_null))
+
+# Effect size
+model <- lmer(mean_MU ~ condsFile + (1|participant), 
+                         data = freeResponseOnly_all)
+eta_squared(model)
+```
+
+### Comparisons with Liang et al.
+
+Trips
+
+```{r trips}
+# Read in file
+all_trips <- read.csv("data/Experiment2_allTrips.csv", header = TRUE)
+
+# Get mean and SD
+mean(all_trips$nTrip[all_trips$condsFile == "noDelay"],)
+mean(all_trips$nTrip[all_trips$condsFile == "longDelay"],)
+sd(all_trips$nTrip[all_trips$condsFile == "noDelay"],)
+sd(all_trips$nTrip[all_trips$condsFile == "longDelay"],)
+```
+
+Streak correct
+
+```{r streak}
+# Get mean and SD
+mean(freeResponseOnly$mean_Streak[freeResponseOnly$condsFile == "noDelay"],)
+mean(freeResponseOnly$mean_Streak[freeResponseOnly$condsFile == "longDelay"],)
+sd(freeResponseOnly$mean_Streak[freeResponseOnly$condsFile == "noDelay"],)
+sd(freeResponseOnly$mean_Streak[freeResponseOnly$condsFile == "longDelay"],)
+```
+
+### Additional measures
+
+The following describes the mean and standard deviation for the number of attempts children made on first trips in each condition, the mean and standard deviation for the amount of time children spent in the store for each condition, and the mean and standard deviation for the number of trips in each condition.
+
+```{r additional measures}
+# Number of attempts
+add_measures <- data %>%
+  group_by(participant, condsFile) %>%
+  summarize(mean_Attempts = mean(totalClickeds, na.rm = TRUE),
+            mean_shelfTime = mean(meanShelfTime, na.rm = TRUE),
+            .groups = 'drop')
+
+# Rename Closing trials as Total-response
+add_measures <- add_measures %>%
+  mutate(condsFile = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "totalResponse",
+    TRUE ~ condsFile  # Keep the original value for all other cases
+  ))
+
+# Trips
+# Load file
+allTrips <- read.csv("data/Experiment2_allTrips.csv", header = TRUE)
+
+# label closing trial
+allTrips$condsFile <- ifelse(allTrips$trial == 4, 
+                       paste0(allTrips$condsFile, "Closing"), 
+                       allTrips$condsFile)
+
+# Rename Closing trials as Total-response
+allTrips <- allTrips %>%
+  mutate(condsFile = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "totalResponse",
+    TRUE ~ condsFile  # Keep the original value for all other cases
+  ))
+
+trips <- allTrips %>%
+  group_by(participant, condsFile) %>%
+  summarize(meanTrips = mean(nTrip, na.rm = TRUE),
+            .groups = 'drop')
+
+# Get N, change condition as needed
+add_measures %>%
+  filter(condsFile == "totalResponse", !is.na(mean_Attempts)) %>%
+  summarise(n_unique = n_distinct(participant))
+
+# Mean and standard deviation for each
+# attempts
+mean(add_measures$mean_Attempts[add_measures$condsFile == "noDelay"])
+sd(add_measures$mean_Attempts[add_measures$condsFile == "noDelay"])
+
+mean(add_measures$mean_Attempts[add_measures$condsFile == "longDelay"])
+sd(add_measures$mean_Attempts[add_measures$condsFile == "longDelay"])
+
+mean(add_measures$mean_Attempts[add_measures$condsFile == "totalResponse"])
+sd(add_measures$mean_Attempts[add_measures$condsFile == "totalResponse"])
+
+# shelf time
+mean(add_measures$mean_shelfTime[add_measures$condsFile == "noDelay"])
+sd(add_measures$mean_shelfTime[add_measures$condsFile == "noDelay"])
+
+mean(add_measures$mean_shelfTime[add_measures$condsFile == "longDelay"])
+sd(add_measures$mean_shelfTime[add_measures$condsFile == "longDelay"])
+
+mean(add_measures$mean_shelfTime[add_measures$condsFile == "totalResponse"])
+sd(add_measures$mean_shelfTime[add_measures$condsFile == "totalResponse"])
+
+# trips
+mean(trips$meanTrips[trips$condsFile == "noDelay"])
+sd(trips$meanTrips[trips$condsFile == "noDelay"])
+
+mean(trips$meanTrips[trips$condsFile == "longDelay"])
+sd(trips$meanTrips[trips$condsFile == "longDelay"])
+
+mean(trips$meanTrips[trips$condsFile == "totalResponse"])
+sd(trips$meanTrips[trips$condsFile == "totalResponse"])
+```
+
+### Random effects comparisons
+
+Study time:
+
+```{r study time random effects}
+# Make sure condition is a factor
+data$condsFile <- as.factor(data$condsFile)
+
+# Remove closing trials for the free-response only analyses
+freeResponseOnly <- data %>%
+  filter(!(condsFile %in% c("noDelayClosing", "longDelayClosing")))
+
+# Maximal model
+studytime_m1 <- glmer(meanListTime ~ condsFile + (1 + condsFile|participant) + (1|trial), 
+                        data = freeResponseOnly, 
+                        family = inverse.gaussian(link = "identity"))
+
+# Using repca, assess dimensionality
+rePCA(studytime_m1)
+```
+
+Memory Use:
+
+```{r random effects memory use}
+# Maximal model
+MU_m1 <- lmer(meanMU ~ condsFile + (1 + condsFile|participant) + (1|trial), 
+                        data = freeResponseOnly)
+
+# Model without correlations between slopes and intercept
+MU_m2 <- lmer(meanMU ~ condsFile + (1|participant) + (0 + condsFile|participant) + (1|trial), 
+                        data = freeResponseOnly)
+
+# Model with slopes and no intercept
+MU_m3 <- lmer(meanMU ~ condsFile + (0 + condsFile|participant) + (1|trial), 
+                data = freeResponseOnly)
+
+# Only participant and trial intercepts
+MU_m4 <- lmer(meanMU ~ condsFile + (1|participant) + (1|trial), 
+                data = freeResponseOnly)
+
+# Only slopes
+MU_m5 <- lmer(meanMU ~ condsFile + (1 + condsFile|participant), 
+                data = freeResponseOnly)
+
+# Using repca, assess dimensionality
+rePCA(MU_m5)
+```
+
+Free Vs. Total Response Memory Use
+
+```{r free v total random effects}
+# Label cond-type to say if its free or total-response
+data <- data %>%
+  mutate(condType = case_when(
+    condsFile %in% c("noDelayClosing", "longDelayClosing") ~ "Total",
+    condsFile %in% c("noDelay", "longDelay") ~ "Free",
+    TRUE ~ NA_character_
+  ))
+
+# Maximal model
+fVt_m1 <- lmer(meanMU ~ condType + (1 + condType|participant) + (1|trial), 
+                data = data)
+
+# Model without correlations between slopes and intercept
+fVt_m2 <- lmer(meanMU ~ condType + (1|participant) + (0 + condType|participant) + (1|trial), 
+                data = data)
+
+# Model with slopes and no intercept
+fVt_m3 <- lmer(meanMU ~ condType + (0 + condType|participant) + (1|trial), 
+                data = data)
+
+# Only participant and trial intercepts
+fVt_m4 <- lmer(meanMU ~ condType + (1|participant) + (1|trial), 
+                data = data)
+
+# Only slopes
+fVt_m5 <- lmer(meanMU ~ condType + (1 + condType|participant), 
+                data = data)
+```
+
+## Plots
+
+##### Figure 9, MU and Study time between conditions
+
+```{r fig 9}
+par(mfrow = c(1, 2))
+
+# 95% CI function
+ci95 <- function(x) {
+  x <- x[!is.na(x)]
+  m  <- mean(x)
+  se <- sd(x) / sqrt(length(x))
+  # t-critical value for 95 % CI
+  tcrit <- qt(0.975, df = length(x) - 1)
+  c(lower = m - tcrit * se,
+    upper = m + tcrit * se)
+}
+
+# Rename values in the 'condsFile' column
+freeResponseOnly$condsFile <- as.character(freeResponseOnly$condsFile)
+freeResponseOnly$condsFile[freeResponseOnly$condsFile == "noDelay"] <- "No-delay"
+freeResponseOnly$condsFile[freeResponseOnly$condsFile == "longDelay"] <- "Long-delay"
+
+# study time ------------
+# Calculate means
+means <- tapply(freeResponseOnly$mean_StudyTime, freeResponseOnly$condsFile, mean)
+
+# Define the x-axis levels (to match the ggplot2 ordering)
+conds_levels <- c("No-delay", "Long-delay")
+x_positions <- 1:length(conds_levels)
+
+# Create an empty plot
+plot(
+  x_positions, means[conds_levels], 
+  type = "n", xaxt = "n", yaxt = "n", ylim = c(0, 20.0), xlim = c(0.5, 2.5),
+  xlab = "", ylab = "Mean Study Time (seconds)", 
+  main = "",
+    cex.lab = 1.2,
+  cex.axis = 1.2,
+  cex.main = 1.1
+)
+
+axis(2, at = seq(0, 20, by = 4), cex.axis = 1.2)
+
+participants <- unique(freeResponseOnly$participant)
+
+for (p in participants) {
+  this_participant <- freeResponseOnly[freeResponseOnly$participant == p, ]
+  if (nrow(this_participant) == 2) {
+    # Get the x positions for this participant’s conditions
+    x_vals <- match(this_participant$condsFile, conds_levels)
+    y_vals <- this_participant$mean_StudyTime
+    lines(x_vals, y_vals, col = adjustcolor("#009E73", alpha.f = 0.3), lwd = 1)
+  }
+}
+
+# Add x-axis labels normally
+axis(1, at = x_positions, labels = conds_levels, cex.axis = 1.2)
+
+# Add points for each participant
+for (i in 1:length(conds_levels)) {
+  condition_data <- freeResponseOnly[freeResponseOnly$condsFile == conds_levels[i], ]
+  points(rep(x_positions[i], nrow(condition_data)), condition_data$mean_StudyTime, 
+         pch = 1, col = "#0072B2")
+}
+
+# Add points for the means
+points(x_positions, means[conds_levels], pch = 10, col = "black")
+
+# Add a solid line connecting the means
+#lines(x_positions, means[conds_levels], col = "black", lwd = 2)
+
+# Add horizontal segments at the means (optional, similar to ggplot2's stat_summary)
+segments(
+  x_positions - 0.1, means[conds_levels], 
+  x_positions + 0.1, means[conds_levels],
+  col = "black", lwd = 3.0
+)
+
+# Add mean labels for each condition
+#text(x_positions, means[conds_levels] + 3, 
+#     labels = round(means[conds_levels], 2), cex = 1.5, col = "black")
+
+# Get means again, just to be sure
+means <- tapply(freeResponseOnly$mean_StudyTime, freeResponseOnly$condsFile, mean)
+
+# Compute CIs by condition
+cis <- tapply(freeResponseOnly$mean_StudyTime, freeResponseOnly$condsFile, ci95)
+
+# Pull lower and upper bounds in plotting order
+lower_bounds <- sapply(cis[conds_levels], function(x) x["lower"])
+upper_bounds <- sapply(cis[conds_levels], function(x) x["upper"])
+
+# Add vertical error bars using arrows()
+for (i in 1:length(x_positions)) {
+  arrows(
+    x0 = x_positions[i], y0 = lower_bounds[i], 
+    x1 = x_positions[i], y1 = upper_bounds[i], 
+    length = 0.1, angle = 90, code = 3, col = "#D55E00", lwd = 3.5
+  )
+}
+
+# memory usage -----------
+# Calculate means and standard errors
+means <- tapply(freeResponseOnly$mean_MU, freeResponseOnly$condsFile, mean)
+
+# Calculate standard deviations and sample sizes for each condition
+sds <- tapply(freeResponseOnly$mean_MU, freeResponseOnly$condsFile, sd)
+n_per_condition <- tapply(freeResponseOnly$mean_MU, freeResponseOnly$condsFile, length)
+
+# Calculate standard errors
+se <- sds / sqrt(n_per_condition)
+
+# Define the x-axis levels (to match the ggplot2 ordering)
+conds_levels <- c("No-delay", "Long-delay")
+x_positions <- 1:length(conds_levels)
+
+# Create an empty plot
+plot(
+  x_positions, means[conds_levels], 
+  type = "n", xaxt = "n", yaxt = "n", ylim = c(-1, 8.0), xlim = c(0.5, 2.5),
+  xlab = "", ylab = "Mean Memory Usage (items)", 
+  main = "",
+    cex.lab = 1.2,
+  cex.axis = 1.2,
+  cex.main = 1.1
+)
+
+axis(2, at = seq(-1, 8, by = 1), labels = ifelse(seq(-1, 8, by = 1) %% 2 == 0, seq(-1, 8, by = 1), ""), cex.axis = 1.2)
+
+participants <- unique(freeResponseOnly$participant)
+
+for (p in participants) {
+  this_participant <- freeResponseOnly[freeResponseOnly$participant == p, ]
+  if (nrow(this_participant) == 2) {
+    # Get the x positions for this participant’s conditions
+    x_vals <- match(this_participant$condsFile, conds_levels)
+    y_vals <- this_participant$mean_MU
+    lines(x_vals, y_vals, col = adjustcolor("#009E73", alpha.f = 0.3), lwd = 1)
+  }
+}
+
+
+# Add x-axis labels normally
+axis(1, at = x_positions, labels = conds_levels, cex.axis = 1.2)
+
+# Add points for each participant
+for (i in 1:length(conds_levels)) {
+  condition_data <- freeResponseOnly[freeResponseOnly$condsFile == conds_levels[i], ]
+  points(rep(x_positions[i], nrow(condition_data)), condition_data$mean_MU, 
+         pch = 1, col = "#0072B2")
+}
+
+# Add points for the means
+points(x_positions, means[conds_levels], pch = 10, col = "black")
+
+# Add a solid line connecting the means
+#lines(x_positions, means[conds_levels], col = "black", lwd = 2)
+
+# Add horizontal segments at the means (optional, similar to ggplot2's stat_summary)
+segments(
+  x_positions - 0.1, means[conds_levels], 
+  x_positions + 0.1, means[conds_levels],
+  col = "black", lwd = 3.0
+)
+
+# Add mean labels for each condition
+#text(x_positions, means[conds_levels] + 2, 
+#     labels = round(means[conds_levels], 2), cex = 1.5, col = "black")
+
+# Get means again, just to be sure
+means <- tapply(freeResponseOnly$mean_MU, freeResponseOnly$condsFile, mean)
+
+# Compute CIs by condition
+cis <- tapply(freeResponseOnly$mean_MU, freeResponseOnly$condsFile, ci95)
+
+# Pull lower and upper bounds in plotting order
+lower_bounds <- sapply(cis[conds_levels], function(x) x["lower"])
+upper_bounds <- sapply(cis[conds_levels], function(x) x["upper"])
+
+# Add vertical error bars
+for (i in seq_along(x_positions)) {
+  arrows(
+    x0 = x_positions[i], y0 = lower_bounds[i], 
+    x1 = x_positions[i], y1 = upper_bounds[i], 
+    length = 0.1, angle = 90, code = 3, col = "#D55E00", lwd = 3.5
+  )
+}
+```
+
+##### Figure 10, MU(free) vs MU(total)
+
+```{r mu free v total}
+# Calculate means and standard errors
+means <- tapply(freeVtotal$mean_MU, freeVtotal$condType, mean)
+
+# Calculate standard deviations and sample sizes for each condition
+sds <- tapply(freeVtotal$mean_MU, freeVtotal$condType, sd)
+n_per_condition <- tapply(freeVtotal$mean_MU, freeVtotal$condType, length)
+
+# Calculate standard errors
+se <- sds / sqrt(n_per_condition)
+
+# Define the x-axis levels (to match the ggplot2 ordering)
+conds_levels <- c("Free", "Total")
+x_positions <- 1:length(conds_levels)
+
+# Create an empty plot
+plot(
+  x_positions, means[conds_levels], 
+  type = "n", xaxt = "n", yaxt = "n", ylim = c(-5, 10.0), xlim = c(0.5, 2.5),
+  xlab = "", ylab = "Mean Memory Usage (items)", 
+  main = "",
+  cex.lab = 1.1,
+  cex.axis = 1.5,
+  cex.main = 1.1
+)
+
+axis(2, at = seq(-5, 10, by = 5), labels = seq(-5, 10, by = 5), cex.axis = 1.2)
+
+participants <- unique(freeVtotal$participant)
+
+for (p in participants) {
+  this_participant <- freeVtotal[freeVtotal$participant == p, ]
+  if (nrow(this_participant) == 2) {
+    # Get the x positions for this participant’s conditions
+    x_vals <- match(this_participant$condType, conds_levels)
+    y_vals <- this_participant$mean_MU
+    lines(x_vals, y_vals, col = adjustcolor("#009E73", alpha.f = 0.3), lwd = 1)
+  }
+}
+
+# Add x-axis labels normally
+axis(1, at = x_positions, labels = conds_levels, cex.axis = 1.2)
+
+# Add points for each participant
+for (i in 1:length(conds_levels)) {
+  condition_data <- freeVtotal[freeVtotal$condType == conds_levels[i], ]
+  points(rep(x_positions[i], nrow(condition_data)), condition_data$mean_MU, 
+         pch = 1, col = "#0072B2")
+}
+
+# Add points for the means
+points(x_positions, means[conds_levels], pch = 10, col = "black")
+
+# Add a solid line connecting the means
+#lines(x_positions, means[conds_levels], col = "black", lwd = 2)
+
+# Add horizontal segments at the means (optional, similar to ggplot2's stat_summary)
+segments(
+  x_positions - 0.1, means[conds_levels], 
+  x_positions + 0.1, means[conds_levels],
+  col = "black", lwd = 3.0
+)
+
+# Add mean labels for each condition
+#text(x_positions, means[conds_levels] + 2, 
+#     labels = round(means[conds_levels], 2), cex = 1.5, col = "black")
+
+# Get means again, just to be sure
+means <- tapply(freeVtotal$mean_MU, freeVtotal$condType, mean)
+
+# Compute CIs by condition
+cis <- tapply(freeVtotal$mean_MU, freeVtotal$condType, ci95)
+
+# Pull lower and upper bounds in plotting order
+lower_bounds <- sapply(cis[conds_levels], function(x) x["lower"])
+upper_bounds <- sapply(cis[conds_levels], function(x) x["upper"])
+
+# Add vertical error bars
+for (i in seq_along(x_positions)) {
+  arrows(
+    x0 = x_positions[i], y0 = lower_bounds[i], 
+    x1 = x_positions[i], y1 = upper_bounds[i], 
+    length = 0.1, angle = 90, code = 3, col = "#D55E00", lwd = 3.5
+  )
+}
+```
