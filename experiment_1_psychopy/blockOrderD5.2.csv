@@ -1,0 +1,10 @@
+﻿condsFile,blockMsg,realOrNot,listNum,finalQduration,finalQSMY,finalQCSY
+longDelayIntro.csv,Large Supermarket Practice,0,0,0,0,0
+longDelay.csv,Large Supermarket,1,0,0,0,0
+longDelayClosing.csv,Large Supermarket,1,0,0,0,0
+noDelayIntro.csv,Small Convenient Store Practice,0,1,0,0,0
+noDelay.csv,Small Convenient Store,1,1,0,0,0
+noDelayClosing.csv,Small Convenient Store,1,1,999999,-0.25,0.25
+oneShotIntro3.2.csv,One shot Practice,0,2,0,0,0
+oneShot3.2.csv,One shot Block,1,2,0,0,0
+oneShotClosing.csv,One shot Block,1,2,0,0,0
