@@ -1,0 +1,5 @@
+﻿delayDuration,storeShopperSizeW,storeShopperSizeH,storeShopperPosX,storeShopperPosY,shopperSizeW,shopperSizeH,shopperPosX,shopperPosY,storeShopperImage,shopperImage,storeImage,storeSizeW,storeSizeH,repeatTimes,delayMessage,closing
+0,0.2,0.22,-0.1,-0.365,0.2,0.22,-0.1,-0.365,image/shopper.jpg,image/shopper.jpg,image/store.jpg,0.3,0.3,999,Next to you,0
+0,0.2,0.22,-0.1,-0.365,0.2,0.22,-0.1,-0.365,image/shopper.jpg,image/shopper.jpg,image/store.jpg,0.3,0.3,999,Next to you,0
+0,0.2,0.22,-0.1,-0.365,0.2,0.22,-0.1,-0.365,image/shopper.jpg,image/shopper.jpg,image/store.jpg,0.3,0.3,999,Next to you,0
+0,0.2,0.22,-0.1,-0.365,0.2,0.22,-0.1,-0.365,image/shopper.jpg,image/shopper.jpg,image/store.jpg,0.3,0.3,1,Next to you,1

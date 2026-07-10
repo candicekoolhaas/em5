@@ -1,0 +1,5 @@
+﻿condsFile,blockMsg,realOrNot,listNum,finalQduration,finalQSMY,finalQCSY
+noDelayIntro.csv,Small Convenient Store Practice,0,0,0,0,0
+noDelay.csv,Small Convenient Store Block,1,0,0,0,0
+longDelayIntro.csv,Large Supermarket Practice,0,1,0,0,0
+longDelay.csv,Large Supermarket Block,1,1,0,0,0
